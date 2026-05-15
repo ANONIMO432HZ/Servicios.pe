@@ -1,0 +1,24 @@
+schema: spec-driven
+
+context: |
+  Tech stack: Next.js 15 (App Router), TypeScript, Tailwind CSS 4, Motion.
+  Architecture: Action-based auth (mock), hook-based vehicle search (mock).
+  Testing: Not available (no test runner detected).
+  Style: Glassmorphism, Dark Mode, premium aesthetic.
+
+strict_tdd: false
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected modules/packages
+  specs:
+    - Use Given/When/Then format for scenarios
+  design:
+    - Include sequence diagrams for complex flows
+  tasks:
+    - Group tasks by phase (infrastructure, implementation, testing)
+  apply:
+    - Follow existing code patterns and conventions
+  verify:
+    - Compare implementation against every spec scenario
