@@ -21,12 +21,12 @@ export function ServiceCard({ service }: ServiceCardProps) {
       className="glass-card p-5 flex flex-col h-full group cursor-pointer"
     >
       <div className="flex items-start justify-between mb-4">
-        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white/5 p-2 flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-colors">
+        <div className="relative w-28 h-14 rounded-lg overflow-hidden bg-white/5 p-1.5 flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-colors">
           <Image 
             src={service.logoPath} 
             alt={service.name}
             fill
-            className="object-contain p-2"
+            className="object-contain p-1"
           />
         </div>
         <div className="p-1.5 rounded-lg bg-white/5 text-zinc-500 group-hover:text-primary transition-colors">

@@ -59,7 +59,7 @@ export interface ServiceLink {
   description: string;
   url: string;
   category: ServiceCategory;
-  logoPath: string; // Ruta relativa a /ASSETS/
+  logoPath: string; // Ruta relativa a /ASSETS/img/
   status?: 'Operativo' | 'Mantenimiento';
 }
 ```
