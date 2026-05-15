@@ -1,0 +1,8 @@
+{
+  "name": "GovCheck",
+  "description": "Plataforma de consulta vehicular institucional",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
