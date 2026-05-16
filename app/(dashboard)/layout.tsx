@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react';
-import { Sidebar } from '@/components/layout/Sidebar';
 import { Navbar } from '@/components/layout/Navbar';
 
 export default function DashboardLayout({
@@ -9,35 +8,38 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-
   return (
-    <div className="flex h-screen bg-background overflow-hidden relative selection:bg-primary/30 selection:text-white">
-      {/* Decorative background glow */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[150px]"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/10 blur-[150px]"></div>
+    <div className="relative min-h-screen bg-background overflow-x-hidden selection:bg-primary/30 selection:text-white">
+      {/* Decorative Background Elements */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-500/5 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-blue-400/5 blur-[100px]" />
       </div>
 
-      {/* Mobile overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-md z-30 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-      
-      <Sidebar isOpen={isSidebarOpen} />
-      
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-          <div className="p-4 md:p-8 max-w-[1600px] mx-auto">
-            {children}
-          </div>
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navbar onMenuClick={() => {}} />
+        
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 py-8 lg:py-12">
+          {children}
         </main>
+
+        <footer className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-zinc-500 text-xs font-bold uppercase tracking-widest">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-primary/20 rounded flex items-center justify-center">
+               <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+            </div>
+            <p>© {new Date().getFullYear()} GovCheck - Plataforma de Inteligencia Vehicular</p>
+          </div>
+          <div className="flex gap-8">
+            <a href="#" className="hover:text-primary transition-colors">Términos</a>
+            <a href="#" className="hover:text-primary transition-colors">Privacidad</a>
+            <a href="#" className="hover:text-primary transition-colors">Soporte</a>
+          </div>
+        </footer>
       </div>
     </div>
   );
 }
+
 

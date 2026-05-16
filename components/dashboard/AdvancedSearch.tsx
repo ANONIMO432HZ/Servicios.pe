@@ -102,10 +102,15 @@ export function AdvancedSearch() {
             className="space-y-6"
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-zinc-100 flex items-center gap-2">
-                Informe de Inteligencia Vehicular
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-              </h3>
+              <div className="flex items-center gap-3">
+                <h3 className="text-xl font-bold text-zinc-100 flex items-center gap-2">
+                  {data.plate === 'N/A' ? (data.vin === 'PERSONA NATURAL' ? 'Informe de Identidad' : 'Informe Corporativo') : 'Informe de Inteligencia Vehicular'}
+                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                </h3>
+                <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 text-[10px] font-bold border border-amber-500/20 animate-pulse">
+                  MODO BETA
+                </span>
+              </div>
               <button className="text-sm font-bold text-primary hover:underline flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-lg border border-primary/20">
                 Descargar PDF
                 <FileText className="w-4 h-4" />
@@ -117,47 +122,63 @@ export function AdvancedSearch() {
               <div className="lg:col-span-2 glass-panel p-6 rounded-3xl space-y-6">
                 <div className="flex items-center gap-4 border-b border-white/5 pb-6">
                   <div className="p-4 bg-primary/10 rounded-2xl border border-primary/20">
-                    <Car className="w-8 h-8 text-primary" />
+                    {data.plate === 'N/A' ? <User className="w-8 h-8 text-primary" /> : <Car className="w-8 h-8 text-primary" />}
                   </div>
                   <div>
-                    <h4 className="text-2xl font-black text-white font-mono uppercase tracking-tighter">{data.plate}</h4>
-                    <p className="text-zinc-500 font-body-md">{data.make} {data.model} ({data.year})</p>
+                    <h4 className="text-2xl font-black text-white font-mono uppercase tracking-tighter">
+                      {data.plate === 'N/A' ? data.owner.dni : data.plate}
+                    </h4>
+                    <p className="text-zinc-500 font-body-md">{data.make} {data.model !== 'N/A' ? `- ${data.model}` : ''}</p>
                   </div>
                   <div className="ml-auto flex flex-col items-end">
-                    <span className="px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-wider border border-green-500/20">
-                      Estado: {data.status}
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                      data.status === 'Clear' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                    }`}>
+                      Estado: {data.status === 'Clear' ? 'Verificado' : 'En Revisión'}
                     </span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-8 py-4">
                   <div className="space-y-1">
-                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">VIN / Serie</p>
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Tipo de Registro</p>
                     <p className="text-sm text-zinc-200 font-mono truncate">{data.vin}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Color</p>
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">{data.plate === 'N/A' ? 'Condición' : 'Color'}</p>
                     <p className="text-sm text-zinc-200 font-body-md">{data.color}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Motor</p>
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">{data.plate === 'N/A' ? 'Referencia' : 'Motor'}</p>
                     <p className="text-sm text-zinc-200 font-mono">{data.engineNumber}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Última Revisión</p>
-                    <p className="text-sm text-zinc-200 font-body-md">{data.revisions[0]?.date || 'N/A'}</p>
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Última Actualización</p>
+                    <p className="text-sm text-zinc-200 font-body-md">{new Date().toLocaleDateString()}</p>
                   </div>
                 </div>
 
-                <div className="bg-white/5 rounded-2xl p-4 flex items-center justify-between border border-white/5">
+                <div className={`rounded-2xl p-4 flex items-center justify-between border transition-all ${
+                  data.soat.active 
+                    ? 'bg-green-500/5 border-green-500/10' 
+                    : 'bg-white/5 border-white/5'
+                }`}>
                   <div className="flex items-center gap-3">
-                    <ShieldCheck className="w-5 h-5 text-primary" />
+                    <ShieldCheck className={`w-5 h-5 ${data.soat.active ? 'text-green-500' : 'text-zinc-500'}`} />
                     <div>
-                      <p className="text-sm font-bold text-zinc-200">SOAT Vigente</p>
-                      <p className="text-xs text-zinc-500">{data.soat.company} - Expira: {data.soat.expiry}</p>
+                      <p className="text-sm font-bold text-zinc-200">
+                        {data.plate === 'N/A' ? 'Seguro Personal / SOAT' : 'SOAT Vehicular'}
+                      </p>
+                      <p className="text-xs text-zinc-500">
+                        {data.soat.company} - {data.soat.active ? `Vence: ${data.soat.expiry}` : 'No aplica a este reporte'}
+                      </p>
                     </div>
                   </div>
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  {data.soat.active ? (
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <AlertCircle className="w-5 h-5 text-zinc-700" />
+                  )}
                 </div>
               </div>
 

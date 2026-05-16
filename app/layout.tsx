@@ -15,7 +15,12 @@ const publicSans = Public_Sans({
 export const metadata: Metadata = {
   title: 'GovCheck - Consulta Vehicular',
   description: 'Plataforma de consulta vehicular institucional',
+  icons: {
+    icon: '/govcheck-logo.png',
+    apple: '/govcheck-logo.png',
+  }
 };
+
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (

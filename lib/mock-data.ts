@@ -1,6 +1,6 @@
 export interface Fine {
   id: string;
-  entity: 'SAT' | 'SUTRAN' | 'MUNICIPALIDAD';
+  entity: 'SAT' | 'SUTRAN' | 'MUNICIPALIDAD' | 'SUNAT';
   date: string;
   amount: number;
   status: 'PENDING' | 'PAID';
