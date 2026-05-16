@@ -1,3 +1,4 @@
+import type { APIRoute } from 'astro';
 import { fetchGovData } from '../../../lib/api-client';
 
 export const GET: APIRoute = async (context) => {

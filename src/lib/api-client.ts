@@ -57,7 +57,7 @@ async function fetchJsonPe(type: SearchType, id: string): Promise<ApiResponse> {
       message: result.message,
       provider: 'json_pe'
     };
-  } catch (error) {
+  } catch {
     return { success: false, data: null, message: 'Error en json.pe', provider: 'json_pe' };
   }
 }
@@ -121,8 +121,7 @@ async function fetchElDni(type: SearchType, id: string): Promise<ApiResponse> {
       provider: 'eldni'
     };
 
-  } catch (error) {
-    console.error('ElDni Scraper Error:', error);
+  } catch {
     return { success: false, data: null, message: 'Error al conectar con eldni.com', provider: 'eldni' };
   }
 }
