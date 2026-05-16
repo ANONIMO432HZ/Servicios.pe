@@ -15,7 +15,7 @@ export function AdvancedSearch() {
 
   return (
     <div className="space-y-8">
-      <div className="glass p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden group">
+      <div className="glass-panel p-8 rounded-3xl relative overflow-hidden group">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500"></div>
         
         <div className="relative z-10">
@@ -58,7 +58,7 @@ export function AdvancedSearch() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="glass p-12 rounded-3xl border border-white/5 flex flex-col items-center justify-center text-center space-y-6"
+            className="glass-panel p-12 rounded-3xl flex flex-col items-center justify-center text-center space-y-6"
           >
             <div className="relative">
               <Loader2 className="w-16 h-16 text-primary animate-spin" />
@@ -106,7 +106,7 @@ export function AdvancedSearch() {
                 Informe de Inteligencia Vehicular
                 <CheckCircle2 className="w-5 h-5 text-green-500" />
               </h3>
-              <button className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
+              <button className="text-sm font-bold text-primary hover:underline flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-lg border border-primary/20">
                 Descargar PDF
                 <FileText className="w-4 h-4" />
               </button>
@@ -114,7 +114,7 @@ export function AdvancedSearch() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Información General */}
-              <div className="lg:col-span-2 glass p-6 rounded-3xl border border-white/10 space-y-6">
+              <div className="lg:col-span-2 glass-panel p-6 rounded-3xl space-y-6">
                 <div className="flex items-center gap-4 border-b border-white/5 pb-6">
                   <div className="p-4 bg-primary/10 rounded-2xl border border-primary/20">
                     <Car className="w-8 h-8 text-primary" />
@@ -149,11 +149,11 @@ export function AdvancedSearch() {
                   </div>
                 </div>
 
-                <div className="bg-white/5 rounded-2xl p-4 flex items-center justify-between">
+                <div className="bg-white/5 rounded-2xl p-4 flex items-center justify-between border border-white/5">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="w-5 h-5 text-primary" />
                     <div>
-                      <p className="text-sm font-medium text-zinc-200">SOAT Vigente</p>
+                      <p className="text-sm font-bold text-zinc-200">SOAT Vigente</p>
                       <p className="text-xs text-zinc-500">{data.soat.company} - Expira: {data.soat.expiry}</p>
                     </div>
                   </div>
@@ -162,17 +162,17 @@ export function AdvancedSearch() {
               </div>
 
               {/* Propietario */}
-              <div className="glass p-6 rounded-3xl border border-white/10 flex flex-col justify-between">
+              <div className="glass-panel p-6 rounded-3xl flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-2 mb-6">
-                    <User className="w-5 h-5 text-zinc-500" />
-                    <h4 className="text-sm font-bold text-zinc-300 uppercase tracking-wider">Titular Actual</h4>
+                  <div className="flex items-center gap-2 mb-6 text-zinc-500">
+                    <User className="w-5 h-5" />
+                    <h4 className="text-xs font-bold uppercase tracking-widest">Titular Actual</h4>
                   </div>
                   
                   <div className="space-y-4">
                     <div>
-                      <p className="text-lg font-bold text-white leading-tight">{data.owner.name}</p>
-                      <p className="text-sm text-primary font-mono mt-1">DNI: {data.owner.dni}</p>
+                      <p className="text-xl font-bold text-white leading-tight">{data.owner.name}</p>
+                      <p className="text-sm text-primary font-mono mt-1 font-bold">DNI: {data.owner.dni}</p>
                     </div>
                     
                     <div className="flex items-start gap-2">
@@ -183,10 +183,10 @@ export function AdvancedSearch() {
                 </div>
 
                 <div className="mt-8 p-4 bg-white/5 rounded-2xl border border-white/5">
-                  <p className="text-[10px] text-zinc-500 font-bold uppercase mb-2">Historial Preventivo</p>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase mb-2 tracking-widest">Historial Preventivo</p>
                   <div className="flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-zinc-600" />
-                    <p className="text-xs text-zinc-400">Sin órdenes de captura activas.</p>
+                    <AlertCircle className="w-4 h-4 text-zinc-700" />
+                    <p className="text-xs text-zinc-500">Sin órdenes de captura activas.</p>
                   </div>
                 </div>
               </div>
@@ -197,3 +197,4 @@ export function AdvancedSearch() {
     </div>
   );
 }
+

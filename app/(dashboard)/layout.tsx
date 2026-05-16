@@ -12,17 +12,17 @@ export default function DashboardLayout({
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-[#030303] overflow-hidden relative selection:bg-primary/30 selection:text-white">
-      {/* Dynamic background effects */}
+    <div className="flex h-screen bg-background overflow-hidden relative selection:bg-primary/30 selection:text-white">
+      {/* Decorative background glow */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/5 blur-[120px]"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[150px]"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/10 blur-[150px]"></div>
       </div>
 
       {/* Mobile overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-30 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -40,3 +40,4 @@ export default function DashboardLayout({
     </div>
   );
 }
+
