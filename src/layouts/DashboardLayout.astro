@@ -1,0 +1,72 @@
+---
+import { Navbar } from '../components/layout/Navbar';
+import '../styles/globals.css';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Plataforma de consulta vehicular institucional" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/png" href="/govcheck-logo.png" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | GovCheck</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+	</head>
+	<body class="antialiased min-h-screen bg-background text-foreground">
+		<div class="relative min-h-screen overflow-x-hidden selection:bg-primary/30 selection:text-white">
+			<!-- Decorative Background Elements -->
+			<div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+				<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px] animate-pulse"></div>
+				<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-500/5 blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
+				<div class="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-blue-400/5 blur-[100px]"></div>
+			</div>
+
+			<div class="relative z-10 flex flex-col min-h-screen">
+				<Navbar client:load onMenuClick={() => {}} />
+				
+				<main class="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 py-8 lg:py-12">
+					<slot />
+				</main>
+
+				<footer class="w-full max-w-7xl mx-auto px-4 lg:px-8 py-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-zinc-500 text-xs font-bold uppercase tracking-widest">
+					<div class="flex items-center gap-2">
+						<div class="w-6 h-6 bg-primary/20 rounded flex items-center justify-center">
+							 <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+						</div>
+						<p>© {new Date().getFullYear()} GovCheck - Plataforma de Inteligencia Vehicular</p>
+					</div>
+					<div class="flex gap-8">
+						<a href="#" class="hover:text-primary transition-colors">Términos</a>
+						<a href="#" class="hover:text-primary transition-colors">Privacidad</a>
+						<a href="#" class="hover:text-primary transition-colors">Soporte</a>
+					</div>
+				</footer>
+			</div>
+		</div>
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--font-inter: 'Inter', sans-serif;
+		--font-public-sans: 'Public Sans', sans-serif;
+	}
+	
+	body {
+		font-family: var(--font-inter);
+	}
+	
+	h1, h2, h3, h4, h5, h6 {
+		font-family: var(--font-public-sans);
+	}
+</style>

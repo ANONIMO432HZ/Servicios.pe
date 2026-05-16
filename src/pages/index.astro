@@ -1,0 +1,31 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { AdvancedSearch } from '../components/dashboard/AdvancedSearch';
+import { ServiceDirectory } from '../components/dashboard/ServiceDirectory';
+---
+
+<DashboardLayout title="Portal de Inteligencia">
+	<div class="space-y-12 pb-20">
+		<!-- Welcome Header -->
+		<header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+			<div>
+				<h1 class="text-3xl font-black text-white tracking-tight sm:text-4xl">
+					Portal de <span class="text-primary">Inteligencia</span> Vehicular
+				</h1>
+				<p class="text-zinc-500 mt-2 font-medium max-w-2xl">
+					Bienvenido al centro de mando GovCheck. Centralizamos datos críticos de múltiples entidades para facilitar su labor institucional.
+				</p>
+			</div>
+		</header>
+
+		<!-- Main Search Section -->
+		<section>
+			<AdvancedSearch client:load />
+		</section>
+
+		<!-- Service Directory Section -->
+		<section>
+			<ServiceDirectory client:load />
+		</section>
+	</div>
+</DashboardLayout>

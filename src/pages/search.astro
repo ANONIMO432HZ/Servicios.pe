@@ -1,0 +1,21 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { AdvancedSearch } from '../components/dashboard/AdvancedSearch';
+---
+
+<DashboardLayout title="Búsqueda Avanzada">
+	<div class="space-y-12 pb-20">
+		<header>
+			<h1 class="text-3xl font-black text-white tracking-tight sm:text-4xl">
+				Consulta <span class="text-primary">Detallada</span>
+			</h1>
+			<p class="text-zinc-500 mt-2 font-medium max-w-2xl">
+				Realiza búsquedas por Placa o VIN para obtener reportes técnicos completos.
+			</p>
+		</header>
+
+		<section>
+			<AdvancedSearch client:load />
+		</section>
+	</div>
+</DashboardLayout>

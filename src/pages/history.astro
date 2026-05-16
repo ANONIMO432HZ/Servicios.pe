@@ -1,0 +1,35 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { History, Search } from 'lucide-react';
+---
+
+<DashboardLayout title="Historial de Consultas">
+	<div class="space-y-12 pb-20">
+		<header>
+			<h1 class="text-3xl font-black text-white tracking-tight sm:text-4xl">
+				Historial de <span class="text-primary">Consultas</span>
+			</h1>
+			<p class="text-zinc-500 mt-2 font-medium max-w-2xl">
+				Revisa las búsquedas realizadas recientemente y descarga reportes anteriores.
+			</p>
+		</header>
+
+		<section class="glass-panel p-20 rounded-3xl flex flex-col items-center justify-center text-center">
+			<div class="relative mb-6">
+				<History className="w-16 h-16 text-zinc-800" />
+				<div class="absolute inset-0 bg-primary/5 blur-2xl rounded-full"></div>
+			</div>
+			<h3 class="text-xl font-bold text-zinc-400">Sin historial reciente</h3>
+			<p class="text-sm text-zinc-600 font-medium max-w-xs mt-2">
+				Las consultas que realices aparecerán aquí para que puedas acceder a ellas rápidamente.
+			</p>
+			<a 
+				href="/search" 
+				class="mt-8 flex items-center gap-2 bg-white/5 hover:bg-white/10 text-primary px-6 py-3 rounded-xl font-bold border border-white/5 transition-all"
+			>
+				Realizar mi primera búsqueda
+				<Search className="w-4 h-4" />
+			</a>
+		</section>
+	</div>
+</DashboardLayout>

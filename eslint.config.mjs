@@ -1,11 +1,32 @@
-import { defineConfig } from "eslint/config";
-import next from "eslint-config-next";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import astroPlugin from 'eslint-plugin-astro';
+import tsParser from '@typescript-eslint/parser';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import tsPlugin from '@typescript-eslint/eslint-plugin';
 
-export default defineConfig([{
-    extends: [...next],
-}]);
+export default [
+  // Base config for JS/TS/JSX/TSX/Astro
+  {
+    files: ['**/*.{js,mjs,cjs,ts,tsx,astro}'],
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
+    rules: {
+      'no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+    },
+  },
+  // Astro specific config
+  ...astroPlugin.configs.recommended,
+  {
+    files: ['**/*.astro'],
+    languageOptions: {
+      parser: astroPlugin.parser,
+      extraFileExtensions: ['.astro'],
+    },
+  },
+];
