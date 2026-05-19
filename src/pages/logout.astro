@@ -1,0 +1,5 @@
+---
+// Eliminar la cookie de sesión en el servidor y redirigir
+Astro.cookies.delete('auth_token', { path: '/' });
+return Astro.redirect('/login');
+---

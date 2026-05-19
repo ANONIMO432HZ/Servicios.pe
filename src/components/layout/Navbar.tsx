@@ -5,10 +5,12 @@ import { useEffect, useState } from 'react';
 
 interface NavbarProps {
   onMenuClick: () => void;
+  role?: 'admin' | 'guest';
 }
 
-export function Navbar({ onMenuClick }: NavbarProps) {
+export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
   const [pathname, setPathname] = useState('');
+  const isGuest = role === 'guest';
 
   useEffect(() => {
     setPathname(window.location.pathname);
@@ -79,13 +81,21 @@ export function Navbar({ onMenuClick }: NavbarProps) {
             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full ring-2 ring-black"></span>
           </motion.button>
           
-          <div className="flex items-center gap-3 group cursor-pointer pl-4 border-l border-white/10">
+          <a 
+            href="/logout" 
+            title="Cerrar sesión"
+            className="flex items-center gap-3 group cursor-pointer pl-4 border-l border-white/10"
+          >
              <div className="text-right hidden sm:block">
-               <p className="text-sm font-bold text-zinc-100 group-hover:text-primary transition-colors">A. Vargas</p>
-               <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Administrador</p>
+               <p className="text-sm font-bold text-zinc-100 group-hover:text-red-400 transition-colors">
+                 {isGuest ? 'Invitado' : 'A. Vargas'}
+               </p>
+               <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest group-hover:text-red-400/70 transition-colors">
+                 {isGuest ? 'Acceso Limitado' : 'Administrador'}
+               </p>
              </div>
-             <UserCircle className="w-10 h-10 text-zinc-500 group-hover:text-primary transition-colors" />
-          </div>
+             <UserCircle className={`w-10 h-10 transition-colors ${isGuest ? 'text-zinc-600 group-hover:text-red-400' : 'text-zinc-500 group-hover:text-primary'}`} />
+          </a>
         </div>
       </div>
     </header>
