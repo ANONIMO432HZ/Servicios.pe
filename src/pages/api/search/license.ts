@@ -1,8 +1,10 @@
 import type { APIRoute } from 'astro';
 import { fetchGovData } from '../../../lib/api-client';
+import { validateAndDeductSearch } from '../../../lib/api-auth';
 
 export const GET: APIRoute = async (context) => {
   const dni = context.url.searchParams.get('dni');
+  const provider = context.url.searchParams.get('provider');
 
   if (!dni) {
     return new Response(JSON.stringify({ success: false, message: 'DNI requerido' }), {
@@ -11,9 +13,17 @@ export const GET: APIRoute = async (context) => {
     });
   }
 
-  const result = await fetchGovData('license', dni);
-  return new Response(JSON.stringify(result), {
-    status: result.success ? 200 : 404,
+  const validation = validateAndDeductSearch(context.cookies, 'license', provider);
+  if (!validation.allowed) {
+    return new Response(JSON.stringify({ success: false, message: validation.message }), {
+      status: validation.statusCode || 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  const result = await fetchGovData('license', dni, validation.provider);
+  return new Response(JSON.stringify({ ...result, newCredits: validation.newCredits }), {
+    status: result.success ? 200 : 400,
     headers: { 'Content-Type': 'application/json' }
   });
 }

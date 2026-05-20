@@ -13,7 +13,7 @@ export const GET: APIRoute = async (context) => {
     });
   }
 
-  const validation = validateAndDeductSearch(context.cookies, 'dni', provider);
+  const validation = validateAndDeductSearch(context.cookies, 'ruc10-by-dni', provider);
   if (!validation.allowed) {
     return new Response(JSON.stringify({ success: false, message: validation.message }), {
       status: validation.statusCode || 400,
@@ -21,7 +21,7 @@ export const GET: APIRoute = async (context) => {
     });
   }
 
-  const result = await fetchGovData('dni', dni, validation.provider);
+  const result = await fetchGovData('ruc10-by-dni', dni, validation.provider);
   return new Response(JSON.stringify({ ...result, newCredits: validation.newCredits }), {
     status: result.success ? 200 : 400,
     headers: { 'Content-Type': 'application/json' }

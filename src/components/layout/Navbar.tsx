@@ -37,11 +37,10 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
         </a>
 
 
-        {/*
         <nav className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5">
           {[
             { name: 'Portal', href: '/' },
-            { name: 'Búsqueda', href: '/search' },
+            { name: 'Consola API', href: '/console' },
             { name: 'Historial', href: '/history' },
           ].map((item) => {
             const isActive = pathname === item.href;
@@ -60,7 +59,6 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
             );
           })}
         </nav>
-        */}
       </div>
       
       <div className="flex items-center gap-6">

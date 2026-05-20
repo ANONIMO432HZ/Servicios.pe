@@ -1,0 +1,21 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { ApiConsole } from '../components/dashboard/ApiConsole';
+---
+
+<DashboardLayout title="Consola de Consultas API">
+	<div class="space-y-12 pb-20">
+		<header>
+			<h1 class="text-3xl font-black text-white tracking-tight sm:text-4xl">
+				Consola de <span class="text-primary">Consultas API</span>
+			</h1>
+			<p class="text-zinc-500 mt-2 font-medium max-w-2xl">
+				Interactúa con los servicios de consulta directa mediante API pública (eldni.com) y premium (json.pe).
+			</p>
+		</header>
+
+		<section>
+			<ApiConsole client:load />
+		</section>
+	</div>
+</DashboardLayout>
