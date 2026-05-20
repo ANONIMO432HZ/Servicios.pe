@@ -25,12 +25,46 @@ export function ServiceCard({ service }: ServiceCardProps) {
       <div className="relative aspect-video w-full glass-panel rounded-3xl overflow-hidden border border-white/10 group-hover:border-primary/50 transition-all duration-500 shadow-2xl">
         {/* Main Image */}
         {!imgError ? (
-          <img 
-            src={service.logoPath} 
-            alt={service.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-            onError={() => setImgError(true)}
-          />
+          service.id.includes('migraciones') || service.id.includes('eldni') || service.id === 'sunarp-servicios-online' || service.id === 'sunarp-tive' || service.id === 'sat-callao' || service.id === 'reporte-infocorp' || service.id === 'infogas-deuda' || service.id === 'informe-vehicular' ? (
+            // Centered and fit (Migraciones gets transparent, Infocorp gets red, Infogas gets #003F72 blue, others get white)
+            <div className={`w-full h-full flex items-center justify-center p-4 relative ${
+              service.id.includes('migraciones') 
+                ? '' 
+                : service.id === 'reporte-infocorp' 
+                  ? 'bg-red-600' 
+                  : service.id === 'infogas-deuda'
+                    ? 'bg-[#003F72]'
+                    : 'bg-white'
+            }`}>
+              <img 
+                src={service.logoPath} 
+                alt={service.name}
+                className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                onError={() => setImgError(true)}
+              />
+            </div>
+          ) : (
+            // Full-bleed cover (SBS except SBS Consulta SOAT gets bg-white, SATs, SUNARPs, FISE, ATU, CITV, SUTRAN get #003F72 blue, all others transparent)
+            <img 
+              src={service.logoPath} 
+              alt={service.name}
+              className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${
+                (service.id.includes('sbs') && service.id !== 'sbs-consulta-soat') 
+                  ? 'bg-white' 
+                  : (service.id.startsWith('sat-') || 
+                     service.id.includes('sunarp') || 
+                     service.id.includes('fise') || 
+                     service.id.includes('gnv') || 
+                     service.id.includes('atu') || 
+                     service.id.includes('citv') || 
+                     service.id.includes('revision-tecnica') ||
+                     service.id.includes('sutran'))
+                    ? 'bg-[#003F72]'
+                    : ''
+              }`}
+              onError={() => setImgError(true)}
+            />
+          )
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-zinc-800">
             <ShieldCheck className="w-12 h-12 opacity-10" />

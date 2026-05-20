@@ -24,19 +24,20 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
             <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
             <img 
               src="/govcheck-logo.png" 
-              alt="GovCheck Logo" 
+              alt="Servicios.pe Logo" 
               width={48} 
               height={48} 
               className="relative z-10 drop-shadow-2xl"
             />
           </div>
           <div className="hidden sm:block">
-            <h1 className="text-xl font-black text-white tracking-tighter leading-none">GovCheck</h1>
-            <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mt-1">Inteligencia Vehicular</p>
+            <h1 className="text-xl font-black text-white tracking-tighter leading-none">Servicios<span className="text-primary">.pe</span></h1>
+            <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mt-1">Consultas y Trámites</p>
           </div>
         </a>
 
 
+        {/*
         <nav className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5">
           {[
             { name: 'Portal', href: '/' },
@@ -59,9 +60,11 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
             );
           })}
         </nav>
+        */}
       </div>
       
       <div className="flex items-center gap-6">
+        {/*
         <div className="hidden md:flex items-center bg-white/5 border border-white/10 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-primary/50 transition-all w-64 group">
            <Search className="w-4 h-4 text-zinc-500 mr-2 group-focus-within:text-primary transition-colors" />
            <input 
@@ -70,6 +73,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
              className="bg-transparent border-none outline-none text-xs text-zinc-100 w-full placeholder:text-zinc-600"
            />
         </div>
+        */}
 
         <div className="flex items-center gap-4">
           <motion.button 

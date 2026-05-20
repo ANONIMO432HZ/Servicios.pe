@@ -17,11 +17,11 @@ const role = authCookie === 'guest-session-token' ? 'guest' : 'admin';
 <html lang="es">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Plataforma de consulta vehicular institucional" />
+		<meta name="description" content="Portal unificado de servicios y consultas del Estado Peruano" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/png" href="/govcheck-logo.png" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title} | GovCheck</title>
+		<title>{title} | Servicios.pe</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -47,7 +47,7 @@ const role = authCookie === 'guest-session-token' ? 'guest' : 'admin';
 						<div class="w-6 h-6 bg-primary/20 rounded flex items-center justify-center">
 							 <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
 						</div>
-						<p>© {new Date().getFullYear()} GovCheck - Plataforma de Inteligencia Vehicular</p>
+						<p>© {new Date().getFullYear()} Servicios.pe - Portal de Consultas Ciudadanas</p>
 					</div>
 					<div class="flex gap-8">
 						<a href="#" class="hover:text-primary transition-colors">Términos</a>
