@@ -475,8 +475,8 @@ export const SERVICES: ServiceLink[] = [
   {
     id: 'reporte-infocorp',
     name: 'Reporte Infocorp Equifax',
-    description: 'Solicita tu Tarjeta de Identificación Vehicular Electrónica.',
-    url: 'https://api.whatsapp.com/send?phone=51932477857&text=TIVE.%20Quiero%20tramitar%20la%20TIVE%20(Tarjeta%20de%20Propiedad%20Vehicular)',
+    description: 'Obtén tu reporte crediticio consolidado de Infocorp Equifax.',
+    url: 'https://api.whatsapp.com/send?phone=51932477857&text=INFOCORP.%20Quiero%20mi%20reporte%20crediticio%20Infocorp%20Equifax',
     category: 'Pago',
     logoPath: '/assets/img/infocorp_reporte.png',
     status: 'Operativo'
@@ -484,10 +484,39 @@ export const SERVICES: ServiceLink[] = [
   {
     id: 'informe-vehicular',
     name: 'Informe Vehicular',
-    description: 'Verifica la vigencia del SOAT a través de la SBS.',
+    description: 'Historial completo de antecedentes, propietarios, multas y gravámenes del vehículo.',
     url: 'https://api.whatsapp.com/send?phone=51932477857&text=Voy%20a%20comprar%20un%20veh%C3%ADculo%20y%20quiero%20que%20Uds.%20Me%20lo%20filtren%20para%20ver%20si%20me%20conviene%20o%20no',
     category: 'Pago',
     logoPath: '/assets/img/informe_vehicular.png',
     status: 'Operativo'
   },
+  {
+    id: 'copia-certificado-nacimiento',
+    name: 'Copia Certificado de Nacimiento',
+    description: 'Obtén una copia certificada de tu partida o acta de nacimiento.',
+    url: 'https://api.whatsapp.com/send?phone=51932477857&text=Quiero%20obtener%20una%20copia%20de%20mi%20partida%20de%20nacimiento',
+    category: 'Pago',
+    logoPath: '/assets/img/acta_nacimiento.png',
+    status: 'Operativo'
+  },
+  {
+    id: 'copia-certificado-matrimonio',
+    name: 'Copia Certificado de Matrimonio',
+    description: 'Solicita una copia certificada de tu acta de matrimonio.',
+    url: 'https://api.whatsapp.com/send?phone=51932477857&text=Quiero%20obtener%20una%20copia%20certificada%20de%20mi%20acta%20de%20matrimonio',
+    category: 'Pago',
+    logoPath: '/assets/img/copia_acta_matrimonio.png',
+    status: 'Operativo'
+  },
+  {
+    id: 'copia-certificado-defuncion',
+    name: 'Copia Certificado de Defunción',
+    description: 'Obtén una copia certificada del certificado de defunción.',
+    url: 'https://api.whatsapp.com/send?phone=51932477857&text=Solicito%20copia%20certificada%20de%20un%20acta%20de%20defunci%C3%B3n',
+    category: 'Pago',
+    logoPath: '/assets/img/copia_acta_defuncion.png',
+    status: 'Operativo'
+  },
+  
+
 ];
