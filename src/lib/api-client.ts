@@ -24,8 +24,28 @@ export interface ApiResponse {
 
 export async function fetchGovData(type: SearchType, identifier: string, provider?: 'eldni' | 'json_pe' | 'mock'): Promise<ApiResponse> {
   const mode = import.meta.env.API_MODE || 'mock';
-  const resolvedProvider = provider || import.meta.env.API_PROVIDER || 'json_pe';
+  let resolvedProvider = provider || import.meta.env.API_PROVIDER || 'json_pe';
   
+  // Degradación o manejo de error si se solicita json.pe pero no hay token configurado
+  if (resolvedProvider === 'json_pe' && !import.meta.env.JSON_PE_TOKEN) {
+    const elDniTypes = ['dni', 'ruc', 'ruc10-names', 'ruc10-by-dni', 'dni-verification-digit', 'how-many-same-name'];
+    if (elDniTypes.includes(type)) {
+      resolvedProvider = 'eldni';
+    } else {
+      if (mode === 'real') {
+        // En modo REAL, prohibido terminantemente inyectar datos MOCK. Retornamos error de configuración claro.
+        return {
+          success: false,
+          data: null,
+          message: 'Error de Configuración: La consulta en tiempo real de este servicio premium (SOAT, Licencia o Deudas) requiere tener configurado el token de producción (JSON_PE_TOKEN) en el servidor.',
+          provider: 'json_pe'
+        };
+      } else {
+        resolvedProvider = 'mock'; // Solo se degrada a mock si estamos expresamente en modo mock/desarrollo
+      }
+    }
+  }
+
   if (mode === 'mock') {
     return getMockData(type, identifier, resolvedProvider);
   }

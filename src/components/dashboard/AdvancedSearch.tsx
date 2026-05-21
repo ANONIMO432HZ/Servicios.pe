@@ -535,12 +535,12 @@ export function AdvancedSearch() {
               </span>
             </div>
             
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 pt-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-500/5 border border-blue-500/10 text-[10px] text-blue-400 font-black font-mono tracking-tight uppercase hover:bg-blue-500/10 transition-colors">
                 <Car className="w-3.5 h-3.5" />
                 Vehículos
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-green-500/5 border border-green-500/10 text-[10px] text-green-400 font-black font-mono tracking-tight uppercase hover:bg-green-500/10 transition-colors">
+              <span className="relative inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-green-500/5 border border-green-500/10 text-[10px] text-green-400 font-black font-mono tracking-tight uppercase hover:bg-green-500/10 transition-colors">
                 <User className="w-3.5 h-3.5" />
                 DNI
               </span>
@@ -625,10 +625,15 @@ export function AdvancedSearch() {
             animate={{ opacity: 1, y: 0 }}
             className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-start gap-4"
           >
-            <AlertCircle className="w-6 h-6 text-red-500 shrink-0" />
+            <AlertCircle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
             <div>
               <h3 className="font-bold text-red-500">Error en la Consulta</h3>
-              <p className="text-sm text-red-500/80 mt-1">{errorMsg}</p>
+              <p className="text-sm text-red-500/80 mt-1 leading-relaxed">
+                {errorMsg}
+                <span className="block mt-3 text-xs font-bold text-amber-500 uppercase tracking-wide bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
+                  Aviso: Por ahora el sistema solo soporta consultas gratuitas (como DNI y RUC10). Las consultas premium vehiculares, de SOAT o de licencias en tiempo real requieren credenciales adicionales de producción.
+                </span>
+              </p>
             </div>
           </motion.div>
         )}

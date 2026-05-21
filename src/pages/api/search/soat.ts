@@ -1,13 +1,16 @@
 import type { APIRoute } from 'astro';
 import { fetchGovData } from '../../../lib/api-client';
 import { validateAndDeductSearch } from '../../../lib/api-auth';
+import { cleanIdentifier } from '../../../lib/utils';
 
 export const GET: APIRoute = async (context) => {
   const plate = context.url.searchParams.get('plate');
   const provider = context.url.searchParams.get('provider');
 
-  if (!plate) {
-    return new Response(JSON.stringify({ success: false, message: 'Placa requerida' }), {
+  const cleanPlate = cleanIdentifier(plate || '', 'soat');
+
+  if (!cleanPlate) {
+    return new Response(JSON.stringify({ success: false, message: 'Placa inválida o requerida' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' }
     });
@@ -21,7 +24,7 @@ export const GET: APIRoute = async (context) => {
     });
   }
 
-  const result = await fetchGovData('soat', plate, validation.provider);
+  const result = await fetchGovData('soat', cleanPlate, validation.provider);
   return new Response(JSON.stringify({ ...result, newCredits: validation.newCredits }), {
     status: result.success ? 200 : 400,
     headers: { 'Content-Type': 'application/json' }

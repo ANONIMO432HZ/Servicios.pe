@@ -1,6 +1,8 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
 import { ApiConsole } from '../components/dashboard/ApiConsole';
+
+const hasJsonPeToken = !!import.meta.env.JSON_PE_TOKEN;
 ---
 
 <DashboardLayout title="Consola de Consultas API">
@@ -18,7 +20,7 @@ import { ApiConsole } from '../components/dashboard/ApiConsole';
 		</header>
 
 		<section>
-			<ApiConsole client:load />
+			<ApiConsole client:load hasJsonPeToken={hasJsonPeToken} />
 		</section>
 	</div>
 </DashboardLayout>

@@ -590,8 +590,9 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                         value={username} 
                         onChange={(e) => {
                           const newName = e.target.value;
-                          setUsername(newName);
-                          localStorage.setItem('govcheck_username', newName);
+                          const cleanName = newName.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s.-]/g, '').slice(0, 30);
+                          setUsername(cleanName);
+                          localStorage.setItem('govcheck_username', cleanName);
                         }}
                         className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-semibold"
                         placeholder="Ej. A. Vargas"
@@ -773,7 +774,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                     className="w-full bg-primary hover:bg-blue-600 text-white text-xs font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-[0.98] text-center flex items-center justify-center gap-2 group cursor-pointer border border-primary/20"
                   >
                     <span>Iniciar Sesión con Demo</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                   </a>

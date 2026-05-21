@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Search, Loader2, Coins, Clock, ArrowRight, Code, Sparkles, Cpu, 
-  RefreshCw, CheckCircle2, ShieldAlert, FileText, Lock, Eye
+  RefreshCw, CheckCircle2, ShieldAlert, FileText, Lock, Eye, Copy
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -18,7 +18,43 @@ function getCookie(name: string): string | null {
   return null;
 }
 
-export function ApiConsole() {
+// ==========================================
+// COPY BUTTON UTILITY COMPONENT
+// ==========================================
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      type="button"
+      className="p-1 rounded bg-white/5 hover:bg-white/10 hover:text-white border border-white/5 text-zinc-500 hover:border-white/10 transition-all cursor-pointer flex items-center justify-center shrink-0"
+      title="Copiar al portapapeles"
+    >
+      {copied ? (
+        <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />
+      ) : (
+        <Copy className="w-3.5 h-3.5" />
+      )}
+    </button>
+  );
+}
+
+interface ApiConsoleProps {
+  hasJsonPeToken?: boolean;
+}
+
+export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
   // Estado de usuario y créditos
   const [role, setRole] = useState<'guest' | 'admin'>('guest');
   const [credits, setCredits] = useState<number>(50);
@@ -127,6 +163,13 @@ export function ApiConsole() {
       window.dispatchEvent(new CustomEvent('show-guest-modal'));
       return;
     }
+
+    if (category === 'paid' && !hasJsonPeToken) {
+      setSearchState('error');
+      setErrorMessage('La consulta Premium está deshabilitada porque no se ha detectado el token de json.pe en el servidor.');
+      return;
+    }
+
     const cleanedVal = inputValue.trim().toUpperCase();
     if (!cleanedVal) return;
 
@@ -365,19 +408,25 @@ export function ApiConsole() {
                   window.dispatchEvent(new CustomEvent('show-guest-modal'));
                   return;
                 }
+                if (!hasJsonPeToken) {
+                  return;
+                }
                 setCategory('paid');
               }}
+              disabled={!hasJsonPeToken}
               className={`py-3 px-4 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-1 relative ${
                 category === 'paid'
                   ? 'bg-white/10 text-white border border-white/5'
                   : 'text-zinc-500 hover:text-zinc-300'
-              } ${role !== 'admin' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              } ${(!hasJsonPeToken || role !== 'admin') ? 'opacity-40 cursor-not-allowed' : ''}`}
             >
               <span className="font-bold flex items-center gap-1">
                 Premium
-                {role !== 'admin' && <Lock className="w-3 h-3 text-zinc-500" />}
+                {(!hasJsonPeToken || role !== 'admin') && <Lock className="w-3 h-3 text-zinc-500" />}
               </span>
-              <span className="text-[9px] uppercase tracking-widest text-amber-500 font-semibold">CON COSTO</span>
+              <span className="text-[9px] uppercase tracking-widest text-amber-500 font-semibold">
+                {hasJsonPeToken ? 'CON COSTO' : 'SIN TOKEN'}
+              </span>
             </button>
           </div>
         </div>
@@ -399,7 +448,7 @@ export function ApiConsole() {
               { id: 'soat', name: 'SOAT Vehicular', cost: 1, freeAllowed: false },
             ].map((item) => {
               const isSelected = queryType === item.id;
-              const isAllowed = category === 'paid' || item.freeAllowed;
+              const isAllowed = (category === 'paid' && hasJsonPeToken) || item.freeAllowed;
               
               return (
                 <button
@@ -426,7 +475,9 @@ export function ApiConsole() {
                       item.freeAllowed ? (
                         <span className="text-[9px] bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-md font-bold uppercase">Gratis</span>
                       ) : (
-                        <span className="text-[9px] bg-zinc-800 text-zinc-600 px-2 py-0.5 rounded-md font-bold uppercase">Bloqueado</span>
+                        <span className="text-[9px] bg-zinc-800 text-zinc-600 px-2 py-0.5 rounded-md font-bold uppercase">
+                          {!hasJsonPeToken ? 'Falta Token' : 'Bloqueado'}
+                        </span>
                       )
                     ) : (
                       <span className="text-[9px] bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2 py-0.5 rounded-md font-bold uppercase">
@@ -616,14 +667,20 @@ export function ApiConsole() {
                       <div className="grid grid-cols-2 gap-4 bg-black/20 p-5 rounded-2xl border border-white/5">
                         {Object.entries(resultData.data)
                           .filter(([key]) => key !== 'proveedor')
-                          .map(([key, val]: any) => (
-                            <div key={key} className="space-y-1">
-                              <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">{key.replace('_', ' ')}</p>
-                              <p className="text-xs text-zinc-200 font-semibold font-mono">
-                                {typeof val === 'object' ? JSON.stringify(val) : String(val)}
-                              </p>
-                            </div>
-                          ))}
+                          .map(([key, val]: any) => {
+                            const stringVal = typeof val === 'object' ? JSON.stringify(val) : String(val);
+                            return (
+                              <div key={key} className="space-y-1">
+                                <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">{key.replace('_', ' ')}</p>
+                                <div className="flex items-center justify-between gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/5">
+                                  <span className="text-xs text-zinc-200 font-semibold font-mono break-all pr-2">
+                                    {stringVal}
+                                  </span>
+                                  <CopyButton text={stringVal} />
+                                </div>
+                              </div>
+                            );
+                          })}
                       </div>
 
                       {/* Notificación de Créditos Restantes */}
@@ -637,7 +694,27 @@ export function ApiConsole() {
                       )}
                     </div>
                   ) : (
-                    <div className="flex-1 flex flex-col">
+                    <div className="flex-1 flex flex-col space-y-3">
+                      <div className="flex justify-end">
+                        <button
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(JSON.stringify(resultData, null, 2));
+                              window.dispatchEvent(new CustomEvent('govcheck-notification', {
+                                detail: {
+                                  title: 'JSON Copiado',
+                                  desc: 'El JSON completo ha sido copiado al portapapeles.',
+                                  type: 'success'
+                                }
+                              }));
+                            } catch (e) {}
+                          }}
+                          className="px-3.5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/5 transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                          Copiar JSON Completo
+                        </button>
+                      </div>
                       <pre className="flex-1 bg-black/50 p-4 rounded-2xl text-xs text-green-400 font-mono overflow-auto border border-white/5 max-h-[360px] scrollbar-thin">
                         {JSON.stringify(resultData, null, 2)}
                       </pre>
