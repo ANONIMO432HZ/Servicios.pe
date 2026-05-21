@@ -1,0 +1,39 @@
+import { c as createComponent } from './astro-component_DNiUXFEw.mjs';
+import 'piccolore';
+import { ba as renderTemplate, aW as maybeRenderHead } from './params-and-props_CvnwIJai.mjs';
+import { r as renderComponent } from './server_Uic00SnP.mjs';
+import { $ as $$DashboardLayout } from './DashboardLayout_Bu4cbNIG.mjs';
+import { Scale, ShieldAlert, Info } from 'lucide-react';
+
+const $$Terms = createComponent(($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "DashboardLayout", $$DashboardLayout, { "title": "Términos de Uso" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="space-y-8 max-w-4xl mx-auto"> <header className="space-y-4"> <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold uppercase tracking-wider"> ${renderComponent($$result2, "Scale", Scale, { "className": "w-3.5 h-3.5" })} <span>Aspecto Legal</span> </div> <h1 class="text-3xl font-black text-white tracking-tight sm:text-4xl">
+Términos y <span class="text-primary">Condiciones de Uso</span> </h1> <p class="text-zinc-500 font-medium leading-relaxed">
+Por favor, leé detenidamente las condiciones de uso de esta plataforma experimental antes de interactuar con sus herramientas.
+</p> </header> <div class="glass-panel p-6 rounded-3xl space-y-6 relative overflow-hidden"> <!-- Decorative glow --> <div class="absolute top-0 right-0 -mt-12 -mr-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div> <div class="flex gap-4 items-start"> ${renderComponent($$result2, "ShieldAlert", ShieldAlert, { "className": "w-6 h-6 text-amber-500 shrink-0 mt-1" })} <div class="space-y-2"> <h3 class="text-sm font-bold text-white uppercase tracking-wider">Carácter Estrictamente Experimental</h3> <p class="text-xs text-zinc-400 leading-relaxed">
+Esta aplicación web es un proyecto experimental, didáctico y personal para la demostración de integraciones de interfaces interactivas y consumo de servicios web públicos de consulta.
+</p> </div> </div> <div class="border-t border-white/5 my-6"></div> <div class="space-y-6 text-zinc-300 text-xs leading-relaxed"> <div class="space-y-2"> <h4 class="text-sm font-bold text-white uppercase tracking-wider">1. Exención Absoluta de Responsabilidad</h4> <p>
+El creador y desarrollador de este sitio web <strong>no asume ningún tipo de responsabilidad</strong> directa, indirecta o subsidiaria por la exactitud, veracidad o uso de la información obtenida a través de este portal. El acceso y consulta de datos se realizan de buena fe con fines demostrativos, y es responsabilidad absoluta del usuario verificar la información en los portales oficiales del Estado Peruano.
+</p> </div> <div class="space-y-2"> <h4 class="text-sm font-bold text-white uppercase tracking-wider">2. Sin Vinculación Oficial</h4> <p>
+Esta plataforma <strong>no tiene ningún vínculo oficial, patrocinio, ni representación</strong> con ninguna entidad gubernamental de la República del Perú ni de otros estados. Los nombres de servicios como RENIEC, SUNAT, MTC, SUNARP, SOAT, eldni y json.pe se mencionan únicamente a modo de referencia técnica del origen de los datos consumidos.
+</p> </div> <div class="space-y-2"> <h4 class="text-sm font-bold text-white uppercase tracking-wider">3. Objeto del Sitio Web</h4> <p>
+El sitio fue desarrollado de forma altruista y didáctica con el único objetivo de <strong>facilitar el acceso consolidado a herramientas de consulta de utilidad pública</strong>, simplificando la interfaz del usuario para su uso experimental en un solo lugar.
+</p> </div> <div class="space-y-2"> <h4 class="text-sm font-bold text-white uppercase tracking-wider">4. Continuidad del Servicio</h4> <p>
+Al ser una plataforma experimental, el servicio puede ser suspendido, modificado o eliminado en cualquier momento sin previo aviso. No se garantizan niveles de servicio, estabilidad en las consultas, ni persistencia de los saldos de créditos de demostración o del historial de búsquedas.
+</p> </div> </div> </div> <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5"> <div class="flex items-center gap-2 text-zinc-500 text-xs font-bold uppercase tracking-wider"> ${renderComponent($$result2, "Info", Info, { "className": "w-4 h-4 text-zinc-500" })} <span>Última actualización: Mayo 2026</span> </div> <a href="/" class="bg-primary hover:bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-md">
+Volver al Inicio
+</a> </div> </div> ` })}`;
+}, "C:/PROYECTOS/govcheck/src/pages/terms.astro", void 0);
+
+const $$file = "C:/PROYECTOS/govcheck/src/pages/terms.astro";
+const $$url = "/terms";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+	__proto__: null,
+	default: $$Terms,
+	file: $$file,
+	url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };

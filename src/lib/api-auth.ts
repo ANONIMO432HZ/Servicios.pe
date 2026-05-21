@@ -17,15 +17,16 @@ export function validateAndDeductSearch(
   const isGuest = authCookie === 'guest-session-token';
   const isLoggedIn = authCookie === 'valid-session-token';
 
-  // 1. Resolver proveedor
-  let provider: 'eldni' | 'json_pe' | 'mock' = 'json_pe';
-  if (requestedProvider === 'eldni') {
-    provider = 'eldni';
+  // 1. Resolver proveedor (por default el proveedor es gratuito/free)
+  let provider: 'eldni' | 'json_pe' | 'mock' = 'eldni';
+  if (requestedProvider === 'json_pe') {
+    provider = 'json_pe';
   } else if (requestedProvider === 'mock') {
     provider = 'mock';
+  } else if (requestedProvider === 'eldni') {
+    provider = 'eldni';
   } else {
-    // Default provider based on role
-    provider = isGuest ? 'eldni' : 'json_pe';
+    provider = 'eldni';
   }
 
   // 2. Reglas para Invitado (Guest)

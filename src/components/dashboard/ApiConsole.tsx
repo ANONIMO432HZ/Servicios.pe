@@ -45,8 +45,8 @@ export function ApiConsole() {
     const isGuestUser = token === 'guest-session-token';
     setRole(isGuestUser ? 'guest' : 'admin');
     
-    // Auto-ajustar categoría según rol para mejor UX
-    setCategory(isGuestUser ? 'free' : 'paid');
+    // Auto-ajustar categoría para que por default esté en gratis/free
+    setCategory('free');
 
     // Cargar créditos
     const userCredits = getCookie('user_credits');
@@ -88,6 +88,17 @@ export function ApiConsole() {
       const data = await res.json();
       if (data.success) {
         setCredits(data.credits);
+        
+        // Disparar evento de notificación dinámico
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('govcheck-notification', {
+            detail: {
+              title: 'Créditos Recargados (Consola)',
+              desc: `Se acreditaron 50 créditos en tu cuenta. Nuevo saldo: ${data.credits} créditos.`,
+              type: 'credits'
+            }
+          }));
+        }
       }
     } catch (e) {
       console.error(e);
@@ -112,6 +123,10 @@ export function ApiConsole() {
 
   const handleQuery = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (role !== 'admin') {
+      window.dispatchEvent(new CustomEvent('show-guest-modal'));
+      return;
+    }
     const cleanedVal = inputValue.trim().toUpperCase();
     if (!cleanedVal) return;
 
@@ -209,13 +224,53 @@ export function ApiConsole() {
       if (res.ok && data.success) {
         setResultData(data);
         setSearchState('success');
+
+        // Disparar evento de notificación dinámico
+        if (typeof window !== 'undefined') {
+          let queryName = queryType.toUpperCase();
+          if (queryType === 'dni-verification-digit') queryName = 'DÍGITO VERIFICADOR';
+          else if (queryType === 'ruc10-names') queryName = 'NOMBRES POR RUC 10';
+          else if (queryType === 'ruc10-by-dni') queryName = 'RUC 10 POR DNI';
+          else if (queryType === 'how-many-same-name') queryName = '¿CUÁNTOS SE LLAMAN COMO YO?';
+          else if (queryType === 'ruc-debt') queryName = 'DEUDA COACTIVA';
+          
+          window.dispatchEvent(new CustomEvent('govcheck-notification', {
+            detail: {
+              title: `Consola API: ${queryName} Exitosa`,
+              desc: `Consulta sobre "${cleanedVal}" realizada con éxito usando el proveedor ${category === 'free' ? 'eldni.com' : 'json.pe'}.`,
+              type: 'success'
+            }
+          }));
+        }
       } else {
         setSearchState('error');
-        setErrorMessage(data.message || 'Error desconocido al procesar la consulta.');
+        const errorMsg = data.message || 'Error desconocido al procesar la consulta.';
+        setErrorMessage(errorMsg);
+
+        // Disparar evento de error
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('govcheck-notification', {
+            detail: {
+              title: `Consola API: Error en Consulta`,
+              desc: `Fallo al consultar "${cleanedVal}": ${errorMsg}`,
+              type: 'error'
+            }
+          }));
+        }
       }
     } catch (err) {
       setSearchState('error');
       setErrorMessage('Error crítico al conectar con el servidor.');
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('govcheck-notification', {
+          detail: {
+            title: `Consola API: Fallo de Red`,
+            desc: `Error crítico de red al consultar "${cleanedVal}".`,
+            type: 'error'
+          }
+        }));
+      }
     }
   };
 
@@ -250,7 +305,7 @@ export function ApiConsole() {
                 ) : (
                   <>
                     <RefreshCw className="w-4 h-4" />
-                    Recargar Créditos (Simulador)
+                    Recargar Créditos
                   </>
                 )}
               </button>
@@ -272,7 +327,7 @@ export function ApiConsole() {
                 </div>
               </div>
               <p className="text-[11px] text-zinc-500 font-medium leading-relaxed">
-                Consultando el servicio público de <span className="text-zinc-300">eldni.com</span>. Para evitar bloqueos temporales del API del estado, se aplica restricción de consultas.
+                Consultando el servicio público para evitar bloqueos temporales del API del estado, se aplica restricción de consultas.
               </p>
             </div>
           )}
@@ -284,6 +339,10 @@ export function ApiConsole() {
           <div className="grid grid-cols-2 gap-2 bg-black/40 p-1 rounded-2xl border border-white/5">
             <button
               onClick={() => {
+                if (role !== 'admin') {
+                  window.dispatchEvent(new CustomEvent('show-guest-modal'));
+                  return;
+                }
                 setCategory('free');
                 const freeTypes = ['dni', 'ruc', 'ruc10-names', 'ruc10-by-dni', 'dni-verification-digit', 'how-many-same-name'];
                 if (!freeTypes.includes(queryType)) {
@@ -303,7 +362,7 @@ export function ApiConsole() {
             <button
               onClick={() => {
                 if (role !== 'admin') {
-                  alert('¡Las consultas premium requieren iniciar sesión!');
+                  window.dispatchEvent(new CustomEvent('show-guest-modal'));
                   return;
                 }
                 setCategory('paid');
@@ -346,7 +405,13 @@ export function ApiConsole() {
                 <button
                   key={item.id}
                   disabled={!isAllowed}
-                  onClick={() => setQueryType(item.id as any)}
+                  onClick={() => {
+                    if (role !== 'admin') {
+                      window.dispatchEvent(new CustomEvent('show-guest-modal'));
+                      return;
+                    }
+                    setQueryType(item.id as any);
+                  }}
                   className={`w-full py-3 px-4 rounded-xl text-xs font-semibold text-left transition-all flex items-center justify-between border ${
                     isSelected 
                       ? 'bg-primary/20 text-white border-primary/40 shadow-sm' 
@@ -399,7 +464,7 @@ export function ApiConsole() {
                         : queryType === 'ruc' || queryType === 'ruc-debt' || queryType === 'ruc10-names'
                           ? "Ingresá RUC (ej. 20123456789)"
                           : queryType === 'how-many-same-name'
-                            ? "Ingresá un Nombre (ej. CARLOS)"
+                            ? "Ingresá solo nombres de pila, sin apellidos (ej. CARLOS o JUAN CARLOS)"
                             : "Ingresá Placa (ej. ABC-1234)"
                     }
                     value={inputValue}
@@ -422,6 +487,12 @@ export function ApiConsole() {
                   )}
                 </button>
               </div>
+              {queryType === 'how-many-same-name' && (
+                <div className="flex items-start gap-2 mt-2 px-1 text-[11px] text-amber-500/80 font-medium">
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                  <p>Recuerda: Ingresa únicamente nombres de pila. No debes incluir apellidos para esta consulta para evitar errores.</p>
+                </div>
+              )}
             </div>
           </form>
         </div>

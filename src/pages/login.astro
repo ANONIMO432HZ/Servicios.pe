@@ -8,6 +8,18 @@ if (Astro.cookies.has('auth_token')) {
   return Astro.redirect('/');
 }
 
+// Iniciar sesión automáticamente si viene el parámetro autologin
+const url = new URL(Astro.request.url);
+if (url.searchParams.get('autologin') === 'true') {
+  Astro.cookies.set('auth_token', 'valid-session-token', {
+    path: '/',
+    httpOnly: true,
+    secure: import.meta.env.PROD,
+    maxAge: 60 * 60 * 24, // 1 día
+  });
+  return Astro.redirect('/');
+}
+
 if (Astro.request.method === 'POST') {
   try {
     const formData = await Astro.request.formData();
@@ -96,6 +108,40 @@ if (Astro.request.method === 'POST') {
 					</div>
 				)}
 
+				<!-- Demo Credentials Card -->
+				<div class="mb-6 bg-primary/5 border border-primary/20 rounded-2xl p-4 text-left relative overflow-hidden group">
+					<div class="absolute top-0 right-0 -mt-6 -mr-6 w-16 h-16 bg-primary/10 rounded-full blur-xl group-hover:bg-primary/20 transition-all"></div>
+					<div class="flex items-center gap-2 mb-2 text-primary font-bold text-[10px] uppercase tracking-wider">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+						</svg>
+						<span>Acceso de Prueba Experimental</span>
+					</div>
+					<p class="text-[11px] text-zinc-400 leading-relaxed mb-3">
+						Probá el sistema completo con consultas en tiempo real de forma gratuita y sin requerir tarjetas ni datos de pago.
+					</p>
+					<div class="grid grid-cols-2 gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5 font-mono text-[10px] text-zinc-300 mb-3">
+						<div>
+							<span class="text-[8px] text-zinc-500 font-bold block uppercase tracking-wider mb-0.5">Usuario Demo</span>
+							<span class="text-white font-bold select-all">admin</span>
+						</div>
+						<div>
+							<span class="text-[8px] text-zinc-500 font-bold block uppercase tracking-wider mb-0.5">Contraseña</span>
+							<span class="text-white font-bold select-all">admin123</span>
+						</div>
+					</div>
+					<button
+						type="button"
+						id="fill-demo-btn"
+						class="w-full bg-primary/20 hover:bg-primary/30 text-primary hover:text-white border border-primary/30 hover:border-primary/50 text-xs font-bold py-2.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 active:scale-[0.98] cursor-pointer"
+					>
+						<span>Usar Credenciales de Prueba</span>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+						</svg>
+					</button>
+				</div>
+
 				<!-- Login Form -->
 				<form method="POST" class="space-y-6">
 					<div>
@@ -156,6 +202,39 @@ if (Astro.request.method === 'POST') {
 				</div>
 			</div>
 		</div>
+
+		<script>
+			const fillBtn = document.getElementById('fill-demo-btn');
+			if (fillBtn) {
+				fillBtn.addEventListener('click', () => {
+					const usernameInput = document.getElementById('username') as HTMLInputElement;
+					const passwordInput = document.getElementById('password') as HTMLInputElement;
+					if (usernameInput && passwordInput) {
+						usernameInput.value = 'admin';
+						passwordInput.value = 'admin123';
+						
+						// Efecto visual de autocompletado
+						usernameInput.classList.add('ring-2', 'ring-primary/50');
+						passwordInput.classList.add('ring-2', 'ring-primary/50');
+						
+						setTimeout(() => {
+							usernameInput.classList.remove('ring-2', 'ring-primary/50');
+							passwordInput.classList.remove('ring-2', 'ring-primary/50');
+							
+							const form = fillBtn.closest('form') || document.querySelector('form');
+							if (form) {
+								const actionInput = document.createElement('input');
+								actionInput.type = 'hidden';
+								actionInput.name = 'action';
+								actionInput.value = 'login';
+								form.appendChild(actionInput);
+								form.submit();
+							}
+						}, 300);
+					}
+				});
+			}
+		</script>
 	</body>
 </html>
 

@@ -100,7 +100,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Plataforma oficial del Seguro Integral de Salud para verificar vigencia y tipo de afiliación.',
     url: 'https://cel.sis.gob.pe/SisConsultaEnLinea',
     category: 'Salud',
-    logoPath: 'https://play-lh.googleusercontent.com/XAXaRfW3Got2rgIBNLZJdJ16TPXNqFQMf6JRatgx_FcmSIJRaX2cWUYw-EN-FRPqLA',
+    logoPath: 'assets/img/sis_logo.png',
     status: 'Operativo'
   },
   {
@@ -494,27 +494,27 @@ export const SERVICES: ServiceLink[] = [
     id: 'copia-certificado-nacimiento',
     name: 'Copia Certificado de Nacimiento',
     description: 'Obtén una copia certificada de tu partida o acta de nacimiento.',
-    url: 'https://api.whatsapp.com/send?phone=51932477857&text=Quiero%20obtener%20una%20copia%20de%20mi%20partida%20de%20nacimiento',
+    url: 'https://api.whatsapp.com/send?phone=51992621768&text=Quiero%20obtener%20una%20copia%20de%20mi%20partida%20de%20nacimiento',
     category: 'Pago',
-    logoPath: '/assets/img/acta_nacimiento.png',
+    logoPath: '/assets/img/reniec_cert.jpg',
     status: 'Operativo'
   },
   {
     id: 'copia-certificado-matrimonio',
     name: 'Copia Certificado de Matrimonio',
     description: 'Solicita una copia certificada de tu acta de matrimonio.',
-    url: 'https://api.whatsapp.com/send?phone=51932477857&text=Quiero%20obtener%20una%20copia%20certificada%20de%20mi%20acta%20de%20matrimonio',
+    url: 'https://api.whatsapp.com/send?phone=51992621768&text=Quiero%20obtener%20una%20copia%20certificada%20de%20mi%20acta%20de%20matrimonio',
     category: 'Pago',
-    logoPath: '/assets/img/copia_acta_matrimonio.png',
+    logoPath: '/assets/img/reniec_cert.jpg',
     status: 'Operativo'
   },
   {
     id: 'copia-certificado-defuncion',
     name: 'Copia Certificado de Defunción',
     description: 'Obtén una copia certificada del certificado de defunción.',
-    url: 'https://api.whatsapp.com/send?phone=51932477857&text=Solicito%20copia%20certificada%20de%20un%20acta%20de%20defunci%C3%B3n',
+    url: 'https://api.whatsapp.com/send?phone=51992621768&text=Solicito%20copia%20certificada%20de%20un%20acta%20de%20defunci%C3%B3n',
     category: 'Pago',
-    logoPath: '/assets/img/copia_acta_defuncion.png',
+    logoPath: '/assets/img/reniec_cert.jpg',
     status: 'Operativo'
   },
   

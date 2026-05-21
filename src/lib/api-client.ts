@@ -116,7 +116,7 @@ async function fetchElDni(type: SearchType, id: string): Promise<ApiResponse> {
     } else if (isRuc || isRuc10Names) {
       formData.append('ruc', id);
     } else if (isSameName) {
-      formData.append('nombres', id);
+      formData.append('nombres', id.trim());
     }
 
     const postRes = await fetch(url, {
@@ -206,7 +206,35 @@ async function fetchElDni(type: SearchType, id: string): Promise<ApiResponse> {
         provider: 'eldni'
       };
     } else if (isSameName) {
-      const cantidad = resultHtml.match(/id="cantidad" value="([^"]+)"/)?.[1] || resultHtml.match(/id="total" value="([^"]+)"/)?.[1] || resultHtml.match(/(\d+[,.]?\d*)\s*personas/i)?.[1] || "1,432";
+      const htmlLower = resultHtml.toLowerCase();
+      if (
+        htmlLower.includes("no se debe colocar apellidos") || 
+        htmlLower.includes("no se encontraron personas") || 
+        htmlLower.includes("no hay resultado")
+      ) {
+        return {
+          success: false,
+          data: null,
+          message: 'No se encontraron personas con el nombre que indicaste. Recuerda que no se debe colocar apellidos para esta consulta.',
+          provider: 'eldni'
+        };
+      }
+
+      const cantidad = resultHtml.match(/<mark>(\d+)<\/mark>\s*personas/i)?.[1] || 
+                       resultHtml.match(/Se encontrat?on\s*<mark>(\d+)<\/mark>/i)?.[1] ||
+                       resultHtml.match(/id="cantidad" value="([^"]+)"/)?.[1] || 
+                       resultHtml.match(/id="total" value="([^"]+)"/)?.[1] || 
+                       resultHtml.match(/(\d+[,.]?\d*)\s*personas/i)?.[1];
+
+      if (!cantidad) {
+        return {
+          success: false,
+          data: null,
+          message: 'No se encontraron personas con el nombre que indicaste. Recuerda que no se debe colocar apellidos para esta consulta.',
+          provider: 'eldni'
+        };
+      }
+
       return {
         success: true,
         data: {
