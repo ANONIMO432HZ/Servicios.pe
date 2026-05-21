@@ -100,7 +100,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Plataforma oficial del Seguro Integral de Salud para verificar vigencia y tipo de afiliación.',
     url: 'https://cel.sis.gob.pe/SisConsultaEnLinea',
     category: 'Salud',
-    logoPath: 'assets/img/sis_logo.png',
+    logoPath: '/assets/img/sis_logo.png',
     status: 'Operativo'
   },
   {
@@ -149,7 +149,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Accede al historial de propietarios y gravámenes del vehículo.',
     url: 'https://sprl.sunarp.gob.pe/sprl/ingreso',
     category: 'Transporte',
-    logoPath: '/assets/img/sunarp_dueños_deudas.png',
+    logoPath: '/assets/img/sunarp_duenos_deudas.png',
     status: 'Operativo'
   },
   {
@@ -185,7 +185,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Valida si tienes infracciones pendientes de pago o notificación.',
     url: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/verifica-tu-infraccion/',
     category: 'Transporte',
-    logoPath: '/assets/img/sutran__multas_verificacion.png',
+    logoPath: '/assets/img/sutran_multas_verificacion.png',
     status: 'Operativo'
   },
   {
@@ -221,7 +221,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Seguimiento en línea de títulos y solicitudes registrales.',
     url: 'https://sigueloplus.sunarp.gob.pe/siguelo/',
     category: 'Transporte',
-    logoPath: '/assets/img/sigueloPlus_seguimiento_titulos.png',
+    logoPath: '/assets/img/sigueloplus_seguimiento_titulos.png',
     status: 'Operativo'
   },
   {
@@ -230,7 +230,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Consulta el estado de lunas polarizadas ante la Policía Nacional.',
     url: 'https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas',
     category: 'Transporte',
-    logoPath: '/assets/img/pnp_lunas_polarisadas.png',
+    logoPath: '/assets/img/pnp_lunas_polarizadas.png',
     status: 'Operativo'
   },
   {
