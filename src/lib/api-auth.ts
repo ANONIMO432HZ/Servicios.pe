@@ -94,7 +94,7 @@ export function validateAndDeductSearch(
     limitData.count += 1;
     cookies.set('guest_rate_limit', JSON.stringify(limitData), {
       path: '/',
-      httpOnly: true,
+      httpOnly: false, // Permitir que el cliente JavaScript lea el estado del rate limit
       secure: import.meta.env.PROD,
       maxAge: 60 * 60 * 24
     });
