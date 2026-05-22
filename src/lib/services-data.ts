@@ -20,7 +20,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Consulta oficial de multas electorales pendientes por omisión al sufragio o inasistencia a miembro de mesa.',
     url: 'https://multas.jne.gob.pe/login',
     category: 'Identidad',
-    logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg9fcqMrhWV6rTG2Ug2vQqoRQp6UXw2pLDmQ&s',
+    logoPath: '/assets/img/logo-jne.png',
     status: 'Operativo'
   },
   {
@@ -29,7 +29,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Sistema oficial de programación y consulta de citas para la obtención del Pasaporte Electrónico.',
     url: 'https://citaspasaporte.migraciones.gob.pe/citas-pasaporte-v2/pasaporte',
     category: 'Identidad',
-    logoPath: 'https://rrd.migraciones.gob.pe/TramitesAgencia/images/logomigraciones.png',
+    logoPath: '/assets/img/logo-migraciones.png',
     status: 'Operativo'
   },
   {
@@ -38,7 +38,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Consulta gratuita del estado de emisión de tu DNI o DNI electrónico.',
     url: 'https://serviciosportal.reniec.gob.pe/cetdnice/index.htm',
     category: 'Identidad',
-    logoPath: 'https://yt3.googleusercontent.com/SSIV1mUgZFrgz8x-kHIhs0bgJCeoqlg8h8RPgBnX2FzxM2wgSf76NdfXR1Bi727fyMiAes6EHw=s900-c-k-c0x00ffffff-no-rj',
+    logoPath: '/assets/img/logo-reniec.png',
     status: 'Operativo'
   },
   {
@@ -47,7 +47,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Buscador alternativo de datos públicos para verificación rápida de identidad y antecedentes.',
     url: 'https://eldni.com/',
     category: 'Identidad',
-    logoPath: 'https://dnipornombres.com/wp-content/uploads/2026/03/cropped-DNI-Peru-Logo.png',
+    logoPath: '/assets/img/logo-eldni.png',
     status: 'Operativo'
   },
 
@@ -60,7 +60,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Menú Sol de SUNAT para consultar reportes oficiales de pagos pendientes y tributos obligatorios.',
     url: 'https://e-menu.sunat.gob.pe/cl-ti-itmenu/MenuInternet.htm',
     category: 'Finanzas',
-    logoPath: 'https://f.rpp-noticias.io/2015/02/02/1466486.jpg?width=1020&quality=80',
+    logoPath: '/assets/img/logo-sunat.jpg',
     status: 'Operativo'
   },
   {
@@ -87,7 +87,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Verifica el estado de contribuyente, domicilio fiscal y datos registrales de personas y empresas en Perú.',
     url: 'https://e-consultaruc.sunat.gob.pe/cl-ti-itconsruc/FrameCriterioBusquedaWeb.jsp',
     category: 'Finanzas',
-    logoPath: 'https://f.rpp-noticias.io/2015/02/02/1466486.jpg?width=1020&quality=80',
+    logoPath: '/assets/img/logo-sunat.jpg',
     status: 'Operativo'
   },
 
@@ -109,7 +109,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Verifica la vigencia de tu acreditación en EsSalud y ubica el centro asistencial que te corresponde.',
     url: 'https://dondemeatiendo.essalud.gob.pe/#/consulta',
     category: 'Salud',
-    logoPath: 'https://images.seeklogo.com/logo-png/61/1/essalud-actualizado-logo-png_seeklogo-613305.png',
+    logoPath: '/assets/img/logo-essalud.png',
     status: 'Operativo'
   },
   {
@@ -118,7 +118,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Oficina de Aseguramiento Virtual VIVA para consultar si tu seguro EsSalud está activo y al día.',
     url: 'https://viva.essalud.gob.pe/viva/login',
     category: 'Salud',
-    logoPath: 'https://images.seeklogo.com/logo-png/61/1/essalud-actualizado-logo-png_seeklogo-613305.png',
+    logoPath: '/assets/img/logo-essalud.png',
     status: 'Operativo'
   },
   {
@@ -127,7 +127,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Consulta de trámites iniciados, solicitudes de lactancia, maternidad y prestaciones económicas.',
     url: 'https://apps.essalud.gob.pe/viva-consultas/',
     category: 'Salud',
-    logoPath: 'https://images.seeklogo.com/logo-png/61/1/essalud-actualizado-logo-png_seeklogo-613305.png',
+    logoPath: '/assets/img/logo-essalud.png',
     status: 'Operativo'
   },
 
@@ -247,7 +247,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Servicios gratuitos de la SUNARP.',
     url: 'https://www.sunarp.gob.pe/serviciosenlinea/portal/servicios-gratuitos.html',
     category: 'Transporte',
-    logoPath: 'https://sprl.sunarp.gob.pe/sprl/assets/img/logo-sunarp0.png',
+    logoPath: '/assets/img/logo-sunarp.png',
     status: 'Operativo'
 
   },
@@ -432,7 +432,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Consulta rápida de vigencia de SOAT electrónico y físico.',
     url: 'https://www.apeseg.org.pe/consultas-soat/',
     category: 'Transporte',
-    logoPath: 'https://cdacanguro.com/wp-content/uploads/2024/12/SOAT.jpg',
+    logoPath: '/assets/img/logo-soat.jpg',
     status: 'Operativo'
   },
   {
@@ -441,7 +441,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Consulta el estado de entrega y trámite de tu placa en la AAP.',
     url: 'https://www.placas.pe/Public/CheckPlateStatus.aspx',
     category: 'Transporte',
-    logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_apapSyg0w7Au65ZWyH_c3Ba95Ct3X1Rlwg&s',
+    logoPath: '/assets/img/logo-aap.jpg',
     status: 'Operativo'
   },
   {
@@ -459,7 +459,7 @@ export const SERVICES: ServiceLink[] = [
     description: 'Consulta el estado de entrega y trámite de tu placa en la AAP.',
     url: 'https://www.placas.pe/#/home',
     category: 'Transporte',
-    logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_apapSyg0w7Au65ZWyH_c3Ba95Ct3X1Rlwg&s',
+    logoPath: '/assets/img/logo-aap.jpg',
     status: 'Operativo'
   },
   //SERVICIOS Y TRÁMITES PAGADOS
