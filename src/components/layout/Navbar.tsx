@@ -13,7 +13,8 @@ import {
   RefreshCw, 
   Sparkles,
   Flame,
-  X
+  X,
+  // Menu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
@@ -57,6 +58,12 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
   useEffect(() => {
     setPathname(window.location.pathname);
   }, []);
+
+  /*
+  const toggleSidebar = () => {
+    window.dispatchEvent(new CustomEvent('govcheck:toggle-sidebar'));
+  };
+  */
 
   // Escuchar evento global para abrir modal de invitado
   useEffect(() => {
@@ -222,29 +229,39 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
   };
 
   return (
-    <header className="h-20 glass-panel flex items-center justify-between px-4 lg:px-12 z-30 sticky top-0 border-b border-white/5">
-      <div className="flex items-center gap-8">
+    <header className="h-20 glass-panel flex items-center justify-between px-4 lg:px-12 z-[var(--z-nav)] sticky top-0 border-b border-white/5">
+      <div className="flex items-center gap-4 lg:gap-8">
+        {/* Mobile Menu Toggle - Disabled as Sidebar was removed
+        <button 
+          onClick={toggleSidebar}
+          className="lg:hidden p-2.5 hover:bg-white/10 rounded-xl text-zinc-400 hover:text-white transition-all border border-white/5 active:scale-95"
+          aria-label="Toggle Sidebar"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+        */}
+
         <a href="/" className="flex items-center gap-2 group">
-          <div className="w-12 h-12 relative flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+          <div className="w-10 h-10 lg:w-12 lg:h-12 relative flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
             <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
             <img 
               src="/govcheck-logo.png" 
               alt="Servicios.pe Logo" 
               width={48} 
               height={48} 
-              className="relative z-10 drop-shadow-2xl"
+              className="relative z-10 drop-shadow-2xl w-full h-full object-contain"
             />
           </div>
           <div className="hidden sm:block">
-            <h1 className="text-xl font-black text-white tracking-tighter leading-none">Servicios<span className="text-primary">.pe</span></h1>
-            <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mt-1">Consultas y Trámites</p>
+            <h1 className="text-lg lg:text-xl font-black text-white tracking-tighter leading-none">Servicios<span className="text-primary">.pe</span></h1>
+            <p className="text-[9px] lg:text-[10px] text-zinc-500 uppercase font-bold tracking-widest mt-1">Consultas y Trámites</p>
           </div>
         </a>
 
-        <nav className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5">
+        <nav className="flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar max-w-[40vw] sm:max-w-none">
           {[
             { name: 'Portal', href: '/' },
-            { name: 'Consola API', href: '/console', badge: 'Beta' },
+            { name: 'Consola', href: '/console', badge: 'Beta' },
             { name: 'Historial', href: '/history' },
           ].map((item) => {
             const isActive = pathname === item.href;
@@ -252,7 +269,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
               <a 
                 key={item.href}
                 href={item.href} 
-                className={`px-6 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                   isActive 
                     ? 'bg-white/10 text-white shadow-sm' 
                     : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'
@@ -260,7 +277,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
               >
                 <span>{item.name}</span>
                 {item.badge && (
-                  <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 tracking-wider uppercase animate-pulse">
+                  <span className="px-1 py-0.5 rounded text-[7px] sm:text-[8px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 tracking-wider uppercase animate-pulse">
                     {item.badge}
                   </span>
                 )}
@@ -270,8 +287,8 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
         </nav>
       </div>
       
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-4 relative">
+      <div className="flex items-center gap-2 sm:gap-6">
+        <div className="flex items-center gap-2 sm:gap-4 relative">
           
           {/* Notification Button */}
           <div className="relative">
@@ -304,14 +321,14 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                   animate={{ opacity: 1, y: 8, scale: 1 }}
                   exit={{ opacity: 0, y: 15, scale: 0.98 }}
                   transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="absolute right-0 top-full w-80 sm:w-96 bg-[#0a0a0c] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-50 text-left"
+                  className="absolute right-0 top-full w-[280px] sm:w-96 bg-[#0a0a0c] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-[var(--z-dropdown)] text-left"
                 >
                   <div className="p-4 border-b border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-bold text-white">Notificaciones</p>
                       {unreadCount > 0 && (
                         <span className="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">
-                          {unreadCount} nuevas
+                          {unreadCount}
                         </span>
                       )}
                     </div>
@@ -321,7 +338,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                         className="text-[10px] text-zinc-400 hover:text-primary font-bold uppercase tracking-wider transition-colors flex items-center gap-1 cursor-pointer"
                       >
                         <Check className="w-3 h-3" />
-                        Marcar como leídas
+                        <span className="hidden sm:inline">Marcar leídas</span>
                       </button>
                     )}
                   </div>
@@ -384,7 +401,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                 setShowProfileMenu(!showProfileMenu);
                 setShowNotifications(false);
               }}
-              className={`flex items-center gap-3 group cursor-pointer pl-4 border-l border-white/10 outline-none select-none text-left ${
+              className={`flex items-center gap-3 group cursor-pointer pl-2 sm:pl-4 border-l border-white/10 outline-none select-none text-left ${
                 showProfileMenu ? 'text-primary' : ''
               }`}
             >
@@ -397,7 +414,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                  </p>
                </div>
                <div className="relative">
-                 <UserCircle className={`w-10 h-10 transition-colors ${
+                 <UserCircle className={`w-9 h-9 sm:w-10 sm:h-10 transition-colors ${
                    showProfileMenu ? 'text-primary' : isGuest ? 'text-zinc-600 group-hover:text-primary' : 'text-zinc-500 group-hover:text-primary'
                  }`} />
                  {!isGuest && (
@@ -415,16 +432,16 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                   animate={{ opacity: 1, y: 8, scale: 1 }}
                   exit={{ opacity: 0, y: 15, scale: 0.98 }}
                   transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="absolute right-0 top-full w-80 bg-[#0a0a0c] rounded-2xl border border-white/10 shadow-2xl p-4 text-left z-50"
+                  className="absolute right-0 top-full w-[280px] sm:w-80 bg-[#0a0a0c] rounded-2xl border border-white/10 shadow-2xl p-4 text-left z-[var(--z-dropdown)]"
                 >
                   {/* User Profile Info */}
                   <div className="flex items-center gap-3 pb-4 border-b border-white/5 mb-4">
-                    <div className="w-12 h-12 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center">
-                      <UserCircle className={`w-8 h-8 ${isGuest ? 'text-zinc-500' : 'text-primary'}`} />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center">
+                      <UserCircle className={`w-7 h-7 sm:w-8 sm:h-8 ${isGuest ? 'text-zinc-500' : 'text-primary'}`} />
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-white">{isGuest ? `Usuario Invitado` : username}</p>
-                      <p className="text-xs text-zinc-500">{isGuest ? `invitado_${guestId}@servicios.pe` : `${username.toLowerCase().replace(/\s+/g, '.')}@servicios.pe`}</p>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-white truncate">{isGuest ? `Usuario Invitado` : username}</p>
+                      <p className="text-[10px] sm:text-xs text-zinc-500 truncate">{isGuest ? `invitado_${guestId}@servicios.pe` : `${username.toLowerCase().replace(/\s+/g, '.')}@servicios.pe`}</p>
                     </div>
                   </div>
 
@@ -471,15 +488,15 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                         <a href="/console" className="flex items-center justify-between px-3 py-2.5 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
                           <div className="flex items-center gap-3">
                             <Key className="w-4 h-4 text-zinc-500" />
-                            <span>Claves y Consola API</span>
+                            <span>Consola API</span>
                           </div>
-                          <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 tracking-wider uppercase animate-pulse">
+                          <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 tracking-wider uppercase">
                             Beta
                           </span>
                         </a>
                         <a href="/history" className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
                           <History className="w-4 h-4 text-zinc-500" />
-                          <span>Historial de Búsquedas</span>
+                          <span>Historial</span>
                         </a>
                       </>
                     ) : (
@@ -504,7 +521,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                       className="w-full text-left flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer"
                     >
                       <Settings className="w-4 h-4 text-zinc-500" />
-                      <span>Configuración de Cuenta</span>
+                      <span>Configuración</span>
                     </button>
                     
                     <div className="border-t border-white/5 my-2"></div>
@@ -530,31 +547,14 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100vw',
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 99999,
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                backdropFilter: 'blur(12px)'
-              }}
+              className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
               onClick={() => setShowSettingsModal(false)}
             >
               <motion.div 
                 initial={{ scale: 0.95, y: 15 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 15 }}
-                className="w-full max-w-md bg-[#0a0a0c] border border-white/10 rounded-3xl p-6 shadow-2xl space-y-6 text-left relative overflow-hidden"
-                style={{
-                  position: 'relative',
-                  margin: 'auto'
-                }}
+                className="w-full max-w-md bg-[#0a0a0c] border border-white/10 rounded-3xl p-6 shadow-2xl space-y-6 text-left relative overflow-y-auto max-h-[90vh]"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Decorative Glow */}
@@ -612,7 +612,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                   {/* Opciones de Limpieza */}
                   <div className="space-y-2">
                     <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Almacenamiento Local</label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <button
                         onClick={() => {
                           if (confirm('¿Estás seguro de que querés vaciar todo tu historial de consultas?')) {
@@ -651,7 +651,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                   {/* Info de la Web */}
                   <div className="bg-amber-500/5 rounded-2xl p-4 border border-amber-500/10 space-y-1">
                     <p className="text-[10px] text-amber-500 font-black uppercase tracking-wider">Aviso Experimental</p>
-                    <p className="text-[10px] text-zinc-400 leading-relaxed">Este portal es experimental, demostrativo y con fines didácticos. El autor no recopila datos personales ni se responsabiliza por el uso de las APIs. Fue creado para facilitar el acceso a consultas útiles en un solo lugar.</p>
+                    <p className="text-[10px] text-zinc-400 leading-relaxed">Este portal es experimental, demostrativo y con fines didácticos. El autor no recopila datos personales ni se responsabiliza por el uso de las APIs.</p>
                   </div>
                 </div>
 
@@ -688,31 +688,14 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100vw',
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 99999,
-                backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                backdropFilter: 'blur(12px)'
-              }}
+              className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
               onClick={() => setShowGuestModal(false)}
             >
               <motion.div 
                 initial={{ scale: 0.95, y: 15 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 15 }}
-                className="w-full max-w-md bg-[#0a0a0c] border border-white/10 rounded-3xl p-6 shadow-2xl space-y-6 text-left relative overflow-hidden"
-                style={{
-                  position: 'relative',
-                  margin: 'auto'
-                }}
+                className="w-full max-w-md bg-[#0a0a0c] border border-white/10 rounded-3xl p-6 shadow-2xl space-y-6 text-left relative overflow-y-auto max-h-[90vh]"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Decorative Glow */}
@@ -741,13 +724,13 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                 {/* Contenido */}
                 <div className="space-y-4">
                   <p className="text-xs text-zinc-300 leading-relaxed">
-                    Estás navegando en <strong className="text-white">Modo Invitado</strong>. Para resguardar la estabilidad y evitar saturaciones, esta sesión se encuentra limitada exclusivamente a la <strong className="text-white">visualización estructural de la Consola API</strong>.
+                    Estás navegando en <strong className="text-white">Modo Invitado</strong>. Esta sesión se encuentra limitada exclusivamente a la <strong className="text-white">visualización estructural</strong>.
                   </p>
 
                   <div className="bg-primary/5 rounded-2xl p-4 border border-primary/15 space-y-2">
                     <p className="text-[10px] text-primary font-black uppercase tracking-wider">¿Querés probar todas las funciones?</p>
                     <p className="text-[11px] text-zinc-400 leading-relaxed">
-                      Iniciá sesión con nuestras credenciales de prueba para interactuar con consultas de DNI, SUNAT, placas SUNARP, SOAT vehicular y licencias en tiempo real de forma 100% gratuita y libre de tarjetas de crédito.
+                      Iniciá sesión con nuestras credenciales de prueba para interactuar con consultas reales de forma 100% gratuita.
                     </p>
                   </div>
 
@@ -773,7 +756,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                     href="/login?autologin=true"
                     className="w-full bg-primary hover:bg-blue-600 text-white text-xs font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-[0.98] text-center flex items-center justify-center gap-2 group cursor-pointer border border-primary/20"
                   >
-                    <span>Iniciar Sesión con Demo</span>
+                    <span>Iniciar Sesión</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
@@ -783,7 +766,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
                     onClick={() => setShowGuestModal(false)}
                     className="w-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white text-xs font-bold py-3 px-4 rounded-xl transition-all border border-white/5 hover:border-white/10 active:scale-[0.98] cursor-pointer"
                   >
-                    Seguir en Modo Invitado (Solo Lectura)
+                    Seguir como Invitado
                   </button>
                 </div>
               </motion.div>

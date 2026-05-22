@@ -27,12 +27,29 @@
   --color-on-error: #ffffff;
 
   /* Glassmorphism Tokens */
-  --glass-bg: rgba(18, 18, 18, 0.7);
+  --glass-bg: rgba(10, 10, 10, 0.8);
   --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-blur: 12px;
+  --glass-blur: 16px;
+
+  /* Z-Index Scale */
+  --z-nav: 40;
+  --z-sidebar: 50;
+  --z-modal: 100;
+  --z-dropdown: 60;
+  --z-overlay: 90;
 
   --font-public-sans: var(--font-public-sans), sans-serif;
   --font-inter: var(--font-inter), sans-serif;
+
+  /* Fluid Typography */
+  --font-size-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+  --font-size-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+  --font-size-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+  --font-size-lg: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --font-size-xl: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
+  --font-size-2xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --font-size-3xl: clamp(1.5rem, 1.35rem + 0.75vw, 1.875rem);
+  --font-size-4xl: clamp(2rem, 1.75rem + 1vw, 2.5rem);
 
   --spacing-base: 8px;
   --spacing-stack-sm: 8px;
@@ -85,6 +102,15 @@
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
+}
+
+/* Custom Scrollbar for Main Content */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 ::-webkit-scrollbar-track {

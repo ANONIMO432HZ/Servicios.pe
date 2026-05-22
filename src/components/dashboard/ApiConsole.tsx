@@ -664,15 +664,15 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
                       </div>
 
                       {/* Renderizado de los campos según la consulta */}
-                      <div className="grid grid-cols-2 gap-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-black/20 p-4 sm:p-5 rounded-2xl border border-white/5">
                         {Object.entries(resultData.data)
                           .filter(([key]) => key !== 'proveedor')
                           .map(([key, val]: any) => {
                             const stringVal = typeof val === 'object' ? JSON.stringify(val) : String(val);
                             return (
-                              <div key={key} className="space-y-1">
-                                <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">{key.replace('_', ' ')}</p>
-                                <div className="flex items-center justify-between gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/5">
+                              <div key={key} className="space-y-1 min-w-0">
+                                <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest truncate">{key.replace('_', ' ')}</p>
+                                <div className="flex items-center justify-between gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/5 overflow-hidden">
                                   <span className="text-xs text-zinc-200 font-semibold font-mono break-all pr-2">
                                     {stringVal}
                                   </span>
@@ -682,6 +682,7 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
                             );
                           })}
                       </div>
+
 
                       {/* Notificación de Créditos Restantes */}
                       {resultData.newCredits !== undefined && (
