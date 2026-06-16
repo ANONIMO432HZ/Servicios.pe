@@ -23,8 +23,8 @@ export interface ApiResponse {
 }
 
 export async function fetchGovData(type: SearchType, identifier: string, provider?: 'eldni' | 'json_pe' | 'mock'): Promise<ApiResponse> {
-  const mode = import.meta.env.API_MODE || 'mock';
-  let resolvedProvider = provider || import.meta.env.API_PROVIDER || 'json_pe';
+  const mode = 'real';
+  let resolvedProvider = provider || 'eldni';
   
   // Degradación o manejo de error si se solicita json.pe pero no hay token configurado
   if (resolvedProvider === 'json_pe' && !import.meta.env.JSON_PE_TOKEN) {

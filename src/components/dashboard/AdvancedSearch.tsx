@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { 
   Search, 
   Loader2, 
+  Lock,
   User, 
   Car, 
   ShieldCheck, 
@@ -341,6 +342,17 @@ export function IdentityReportView({ data }: { data: IdentityReport }) {
               <div className="flex items-center gap-2 text-[11px] text-zinc-500 leading-snug">
                 <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
                 <p>Habilitado para conducir en red vial nacional.</p>
+              </div>
+            </div>
+          ) : data.license === undefined ? (
+            <div className="space-y-4">
+              <div className="bg-white/3 border border-amber-500/10 p-5 rounded-2xl text-center space-y-2">
+                <Lock className="w-8 h-8 text-amber-600 mx-auto" />
+                <p className="text-xs font-bold text-amber-400">Licencia No Disponible</p>
+                <p className="text-[10px] text-zinc-500 leading-normal">
+                  La consulta de licencias requiere un proveedor premium.{' '}
+                  <span className="text-zinc-400">Configurá <code className="text-amber-400 bg-black/30 px-1.5 py-0.5 rounded text-[9px]">JSON_PE_TOKEN</code> en el servidor para habilitar este servicio.</span>
+                </p>
               </div>
             </div>
           ) : (

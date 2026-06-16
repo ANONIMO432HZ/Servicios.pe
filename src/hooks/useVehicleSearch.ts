@@ -170,12 +170,21 @@ export function useVehicleSearch() {
         const dniResult = await dniRes.json();
 
         if (dniResult.success && dniResult.data) {
-          let licenseData: { success: boolean; data: any } = { success: false, data: null };
+          let licenseData: { success: boolean; data: any; message?: string } = { success: false, data: null };
           try {
             const licenseRes = await fetch(`/api/search/license?dni=${cleanId}`, { signal: AbortSignal.timeout(4000) });
             if (licenseRes.ok) licenseData = await licenseRes.json();
+            else licenseData = await licenseRes.json().catch(() => ({ success: false, data: null, message: 'Error del servidor' }));
           } catch {
           }
+
+          const hasLicenseSupport = licenseData.success;
+          const isUnavailable = !licenseData.success && (
+            licenseData.message?.toLowerCase().includes('no soportada') ||
+            licenseData.message?.toLowerCase().includes('configuración') ||
+            licenseData.message?.toLowerCase().includes('token') ||
+            licenseData.message?.toLowerCase().includes('premium')
+          );
 
           const fullName = dniResult.data.nombre_completo || `${dniResult.data.apellido_paterno} ${dniResult.data.apellido_materno}, ${dniResult.data.nombres}`;
           const adaptiveData: AdaptiveReport = {
@@ -186,10 +195,12 @@ export function useVehicleSearch() {
               address: dniResult.data.direccion || 'Dirección protegida',
               ubigeo: dniResult.data.ubigeo_reniec || 'N/A',
               status: 'Clear',
-              license: (licenseData.success && licenseData.data?.licencia) ? {
-                categoria: licenseData.data.licencia.categoria,
-                estado: licenseData.data.licencia.estado
-              } : null
+              license: hasLicenseSupport
+                ? {
+                    categoria: licenseData.data.licencia.categoria,
+                    estado: licenseData.data.licencia.estado,
+                  }
+                : isUnavailable ? undefined : null,
             }
           };
 
