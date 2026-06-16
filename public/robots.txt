@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://servicios-pe.vercel.app/sitemap-index.xml

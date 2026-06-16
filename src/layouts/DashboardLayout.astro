@@ -6,9 +6,12 @@ import '../styles/globals.css';
 
 interface Props {
 	title: string;
+	description?: string;
+	ogImage?: string;
+	canonical?: string;
 }
 
-const { title } = Astro.props;
+const { title, description, ogImage, canonical } = Astro.props;
 
 // Obtener el rol de la sesión desde las cookies de Astro (SSR)
 const authCookie = Astro.cookies.get('auth_token')?.value;
@@ -23,17 +26,43 @@ if (role === 'admin' && !Astro.cookies.has('user_credits')) {
 		maxAge: 60 * 60 * 24 * 30
 	});
 }
+
+const defaultDescription = "GovCheck es el portal unificado experimental de servicios y consultas del Perú. Consulta DNI, RUC, placas vehiculares, licencias de conducir y SOAT de forma consolidada.";
+const metaDescription = description || defaultDescription;
+const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site || 'https://servicios-pe.vercel.app').href;
+const finalOgImage = ogImage || new URL('/govcheck-logo.png', Astro.site || 'https://servicios-pe.vercel.app').href;
 ---
 
 <!doctype html>
 <html lang="es">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Portal unificado de servicios y consultas del Estado Peruano" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<link rel="icon" type="image/png" href="/govcheck-logo.png" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title} | Servicios.pe</title>
+		
+		<!-- SEO Meta Tags -->
+		<title>{title} | GovCheck - Servicios y Consultas Perú</title>
+		<meta name="title" content={`${title} | GovCheck - Servicios y Consultas Perú`} />
+		<meta name="description" content={metaDescription} />
+		<link rel="canonical" href={canonicalUrl} />
+		<meta name="robots" content="index, follow" />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:title" content={`${title} | GovCheck`} />
+		<meta property="og:description" content={metaDescription} />
+		<meta property="og:image" content={finalOgImage} />
+		<meta property="og:site_name" content="GovCheck" />
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary" />
+		<meta property="twitter:url" content={canonicalUrl} />
+		<meta property="twitter:title" content={`${title} | GovCheck`} />
+		<meta property="twitter:description" content={metaDescription} />
+		<meta property="twitter:image" content={finalOgImage} />
+
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -47,7 +76,7 @@ if (role === 'admin' && !Astro.cookies.has('user_credits')) {
 				<div class="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-blue-400/5 blur-[100px]"></div>
 			</div>
 
-			<Navbar client:load role={role} onMenuClick={() => {}} />
+			<Navbar client:load role={role} />
 
 			<div class="relative z-10 flex flex-1 overflow-hidden">
 				{/* <Sidebar client:load /> */}

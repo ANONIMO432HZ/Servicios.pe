@@ -1,5 +1,5 @@
 "use client"
-import { History, LayoutDashboard, LogOut, ChevronRight, ShieldCheck, X, Key } from 'lucide-react';
+import { History, LayoutDashboard, LogOut, ChevronRight, ShieldCheck, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 
@@ -21,7 +21,7 @@ export function Sidebar({ initialOpen = false }: SidebarProps) {
     return () => window.removeEventListener('govcheck:toggle-sidebar', handleToggle);
   }, []);
 
-  const navItems = [
+  const navItems: { name: string; href: string; icon: any; badge?: string }[] = [
     { name: 'Portal Principal', href: '/', icon: LayoutDashboard },
     // { name: 'Consola API', href: '/console', icon: Key, badge: 'Beta' },
     // { name: 'Consultas CSV', href: '/bulk-dni', icon: Database, badge: 'Nuevo' },
@@ -45,15 +45,15 @@ export function Sidebar({ initialOpen = false }: SidebarProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeSidebar}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[var(--z-overlay)] lg:hidden"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-(--z-overlay) lg:hidden"
           />
         )}
       </AnimatePresence>
 
       <aside 
-        className={`fixed inset-y-0 left-0 z-[var(--z-sidebar)] w-72 glass-panel transform transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col ${
+        className={`fixed inset-y-0 left-0 z-(--z-sidebar) w-72 glass-panel transform transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 lg:static lg:flex-shrink-0`}
+        } lg:translate-x-0 lg:static lg:shrink-0`}
       >
         <div className="h-20 flex items-center justify-between px-6 border-b border-white/5">
           <div className="flex items-center gap-3">

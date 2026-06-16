@@ -4,7 +4,6 @@ import {
   Bell, 
   Settings, 
   LogOut, 
-  Key, 
   History, 
   CreditCard, 
   Check, 
@@ -204,7 +203,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
   };
 
   return (
-    <header className="h-20 glass-panel flex items-center justify-between px-4 lg:px-12 z-[var(--z-nav)] sticky top-0 border-b border-white/5">
+    <header className="h-20 glass-panel flex items-center justify-between px-4 lg:px-12 z-(--z-nav) sticky top-0 border-b border-white/5">
       <div className="flex items-center gap-4 lg:gap-8">
         {/* Mobile Menu Toggle - Disabled as Sidebar was removed
         <button 
@@ -232,14 +231,13 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
             <p className="text-[9px] lg:text-[10px] text-zinc-500 uppercase font-bold tracking-widest mt-1">Consultas y Trámites</p>
           </div>
         </a>
-
         <nav className="flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar max-w-[40vw] sm:max-w-none">
-          {[
+          {([
             { name: 'Portal', href: '/' },
             // { name: 'Consola', href: '/console', badge: 'Beta' },
             // { name: 'Consultas CSV', href: '/bulk-dni', badge: 'Nuevo' },
             { name: 'Historial', href: '/history' },
-          ].map((item) => {
+          ] as { name: string; href: string; badge?: string }[]).map((item) => {
             const isActive = pathname === item.href;
             return (
               <a 
@@ -297,7 +295,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
                   animate={{ opacity: 1, y: 8, scale: 1 }}
                   exit={{ opacity: 0, y: 15, scale: 0.98 }}
                   transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="absolute right-0 top-full w-[280px] sm:w-96 bg-[#0a0a0c] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-[var(--z-dropdown)] text-left"
+                  className="absolute right-0 top-full w-[280px] sm:w-96 bg-[#0a0a0c] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-(--z-dropdown) text-left"
                 >
                   <div className="p-4 border-b border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -408,7 +406,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
                   animate={{ opacity: 1, y: 8, scale: 1 }}
                   exit={{ opacity: 0, y: 15, scale: 0.98 }}
                   transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="absolute right-0 top-full w-[280px] sm:w-80 bg-[#0a0a0c] rounded-2xl border border-white/10 shadow-2xl p-4 text-left z-[var(--z-dropdown)]"
+                  className="absolute right-0 top-full w-[280px] sm:w-80 bg-[#0a0a0c] rounded-2xl border border-white/10 shadow-2xl p-4 text-left z-(--z-dropdown)"
                 >
                   {/* User Profile Info */}
                   <div className="flex items-center gap-3 pb-4 border-b border-white/5 mb-4">
@@ -439,7 +437,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-xl p-3 mb-4 text-center">
+                    <div className="bg-linear-to-rrom-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-xl p-3 mb-4 text-center">
                       <div className="flex items-center justify-center gap-1.5 mb-1 text-purple-400">
                         <Sparkles className="w-4 h-4 text-purple-400" />
                         <span className="text-xs font-black uppercase tracking-wider">Acceso Premium</span>
@@ -523,7 +521,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+              className="fixed inset-0 z-(--z-modal) flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
               onClick={() => setShowSettingsModal(false)}
             >
               <motion.div 
@@ -664,7 +662,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+              className="fixed inset-0 z-(--z-modal) flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
               onClick={() => setShowGuestModal(false)}
             >
               <motion.div 
