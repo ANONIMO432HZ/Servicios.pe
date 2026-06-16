@@ -1,6 +1,5 @@
 "use client"
 import { 
-  Search, 
   UserCircle, 
   Bell, 
   Settings, 
@@ -10,22 +9,15 @@ import {
   CreditCard, 
   Check, 
   Info, 
-  RefreshCw, 
   Sparkles,
   Flame,
   X,
-  // Menu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-interface NavbarProps {
-  onMenuClick: () => void;
-  role?: 'admin' | 'guest';
-}
-
-export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
+export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
   const [pathname, setPathname] = useState('');
   const isGuest = role === 'guest';
   const [mounted, setMounted] = useState(false);
@@ -113,7 +105,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
       if (stored) {
         try {
           setNotifications(JSON.parse(stored));
-        } catch (e) {
+        } catch {
           const defaultNotifs = [
             {
               id: 'init-1',
@@ -209,23 +201,6 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
       localStorage.setItem('govcheck_notifications', JSON.stringify(updated));
       return updated;
     });
-  };
-
-  const handleRecharge = () => {
-    const newCredits = credits + 50;
-    setCredits(newCredits);
-    document.cookie = `user_credits=${newCredits}; path=/; max-age=${60 * 60 * 24 * 30}`;
-    
-    // Disparar evento de notificación dinámico
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('govcheck-notification', {
-        detail: {
-          title: 'Créditos Recargados',
-          desc: `Recargaste 50 créditos con éxito. Nuevo saldo: ${newCredits} créditos.`,
-          type: 'credits'
-        }
-      }));
-    }
   };
 
   return (

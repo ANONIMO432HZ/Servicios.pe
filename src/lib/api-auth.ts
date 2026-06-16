@@ -58,7 +58,7 @@ export function validateAndDeductSearch(
     if (rateLimitCookie) {
       try {
         limitData = JSON.parse(rateLimitCookie);
-      } catch (e) {}
+      } catch {}
     }
 
     // a. Rate limit de 10 segundos

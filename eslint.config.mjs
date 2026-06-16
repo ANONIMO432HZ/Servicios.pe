@@ -4,6 +4,14 @@ import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 
 export default [
+  {
+    ignores: [
+      '.astro/**',
+      '.vercel/**',
+      'dist/**',
+      'node_modules/**',
+    ],
+  },
   // Base config for JS/TS/JSX/TSX/Astro
   {
     files: ['**/*.{js,mjs,cjs,ts,tsx,astro}'],
@@ -26,7 +34,9 @@ export default [
     files: ['**/*.astro'],
     languageOptions: {
       parser: astroPlugin.parser,
-      extraFileExtensions: ['.astro'],
+      parserOptions: {
+        extraFileExtensions: ['.astro'],
+      },
     },
   },
 ];

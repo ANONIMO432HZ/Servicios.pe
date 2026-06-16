@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { 
   Search, 
   Loader2, 
-  FileText, 
   User, 
   Car, 
   ShieldCheck, 
@@ -62,10 +61,6 @@ function downloadCSV(report: AdaptiveReport, query: string) {
     const s = String(v ?? '');
     return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s;
   };
-
-  const label = report.searchType === 'VEHICULAR' ? 'INFORME VEHICULAR'
-    : report.searchType === 'IDENTIDAD' ? 'CONSULTA IDENTIDAD'
-    : 'PERFIL TRIBUTARIO';
 
   let rows: string[][] = [];
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { mockReports } from '../lib/mock-data';
-import type { VehicleReport, Fine } from '../lib/mock-data';
+import type { VehicleReport } from '../lib/mock-data';
 
 export type SearchState = 'idle' | 'loading' | 'success' | 'error';
 export type AdaptiveSearchType = 'VEHICULAR' | 'IDENTIDAD' | 'EMPRESA';
@@ -174,8 +174,7 @@ export function useVehicleSearch() {
           try {
             const licenseRes = await fetch(`/api/search/license?dni=${cleanId}`, { signal: AbortSignal.timeout(4000) });
             if (licenseRes.ok) licenseData = await licenseRes.json();
-          } catch (e) {
-            console.log("Licencia no disponible");
+          } catch {
           }
 
           const fullName = dniResult.data.nombre_completo || `${dniResult.data.apellido_paterno} ${dniResult.data.apellido_materno}, ${dniResult.data.nombres}`;
@@ -224,7 +223,7 @@ export function useVehicleSearch() {
             }));
           }
         }
-      } catch (error) {
+      } catch {
         setState('error');
         setErrorMsg('Error al conectar con el servicio de identidad.');
 
@@ -252,7 +251,7 @@ export function useVehicleSearch() {
           try {
              const debtRes = await fetch(`/api/search/ruc-debt?ruc=${cleanId}`, { signal: AbortSignal.timeout(4000) });
              if (debtRes.ok) debtData = await debtRes.json();
-          } catch (e) {}
+           } catch {}
 
           const debts: SUNATDebt[] = debtData.success && Array.isArray(debtData.data) 
             ? debtData.data.map((d: any, i: number) => ({
@@ -308,7 +307,7 @@ export function useVehicleSearch() {
             }));
           }
         }
-      } catch (error) {
+      } catch {
         setState('error');
         setErrorMsg('Error al conectar con el servicio de empresas.');
 
@@ -418,7 +417,7 @@ export function useVehicleSearch() {
           }
         }
       }
-    } catch (error) {
+    } catch {
       setState('error');
       setErrorMsg('Error de conexión con el servicio vehicular.');
 

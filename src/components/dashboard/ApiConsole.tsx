@@ -1,8 +1,8 @@
 "use client"
 import { useState, useEffect } from 'react';
 import { 
-  Search, Loader2, Coins, Clock, ArrowRight, Code, Sparkles, Cpu, 
-  RefreshCw, CheckCircle2, ShieldAlert, FileText, Lock, Eye, Copy
+  Search, Loader2, Coins, Clock, ArrowRight, Code, Cpu, 
+  RefreshCw, CheckCircle2, ShieldAlert, Lock, Eye, Copy
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -96,25 +96,9 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
       try {
         const parsed = JSON.parse(decodeURIComponent(limitCookie));
         setRateLimitData({ count: parsed.count, lastQuery: parsed.lastQuery });
-      } catch (e) {}
+      } catch {}
     }
   }, []);
-
-  // Sincronizar cookies después de una consulta
-  const refreshUserData = () => {
-    const userCredits = getCookie('user_credits');
-    if (userCredits) {
-      setCredits(parseInt(userCredits, 10));
-    }
-
-    const limitCookie = getCookie('guest_rate_limit');
-    if (limitCookie) {
-      try {
-        const parsed = JSON.parse(decodeURIComponent(limitCookie));
-        setRateLimitData({ count: parsed.count, lastQuery: parsed.lastQuery });
-      } catch (e) {}
-    }
-  };
 
   // Recarga de créditos (Simulador)
   const handleRecharge = async () => {
@@ -143,19 +127,6 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
     }
   };
 
-  // Costo estimado de créditos
-  const creditCosts: Record<string, number> = {
-    dni: 1,
-    license: 1,
-    ruc: 1,
-    'ruc-debt': 1,
-    plate: 2,
-    soat: 1,
-    'ruc10-names': 1,
-    'ruc10-by-dni': 1,
-    'dni-verification-digit': 1,
-    'how-many-same-name': 1
-  };
 
   const handleQuery = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -301,7 +272,7 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
           }));
         }
       }
-    } catch (err) {
+    } catch {
       setSearchState('error');
       setErrorMessage('Error crítico al conectar con el servidor.');
 
@@ -708,7 +679,7 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
                                   type: 'success'
                                 }
                               }));
-                            } catch (e) {}
+                            } catch {}
                           }}
                           className="px-3.5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/5 transition-all flex items-center gap-1.5 cursor-pointer"
                         >

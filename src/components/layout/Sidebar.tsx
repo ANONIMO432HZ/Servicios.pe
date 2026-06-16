@@ -1,5 +1,5 @@
 "use client"
-import { Search, History, LayoutDashboard, LogOut, ChevronRight, ShieldCheck, X, Key, Database } from 'lucide-react';
+import { History, LayoutDashboard, LogOut, ChevronRight, ShieldCheck, X, Key } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 
