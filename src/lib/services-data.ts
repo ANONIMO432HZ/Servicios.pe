@@ -44,10 +44,19 @@ export const SERVICES: ServiceLink[] = [
   {
     id: 'eldni-consulta-identidad',
     name: 'Consulta DNI Ciudadano',
-    description: 'Buscador alternativo de datos públicos para verificación rápida de identidad y antecedentes.',
+    description: 'Buscador alternativo de datos públicos para consulta rápida de identidad.',
     url: 'https://eldni.com/',
     category: 'Identidad',
     logoPath: '/assets/img/logo-eldni.png',
+    status: 'Operativo'
+  },
+  {
+    id: 'dniperu-consulta-identidad',
+    name: 'Consulta DNI Ciudadano 2',
+    description: 'Buscador alternativo de datos públicos para consulta rápida de identidad.',
+    url: 'https://dniperu.com/',
+    category: 'Identidad',
+    logoPath: '/assets/img/logo-dniperu.png',
     status: 'Operativo'
   },
 

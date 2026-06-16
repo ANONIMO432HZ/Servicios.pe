@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { mockReports } from '../lib/mock-data';
 import type { VehicleReport } from '../lib/mock-data';
+export type { VehicleReport };
 
 export type SearchState = 'idle' | 'loading' | 'success' | 'error';
 export type AdaptiveSearchType = 'VEHICULAR' | 'IDENTIDAD' | 'EMPRESA';
@@ -339,11 +340,14 @@ export function useVehicleSearch() {
       setState('success');
 
       const label = searchType === 'identidad' ? 'Identidad' : searchType === 'ruc' ? 'RUC' : 'Vehicular';
-      const desc = searchType === 'identidad'
-        ? `Identidad verificada para ${report.data.fullName}.`
-        : searchType === 'ruc'
-          ? `Empresa consultada: ${report.data.companyName}.`
-          : `Historial obtenido para ${report.data.plate}.`;
+      let desc = '';
+      if (report.searchType === 'IDENTIDAD') {
+        desc = `Identidad verificada para ${report.data.fullName}.`;
+      } else if (report.searchType === 'EMPRESA') {
+        desc = `Empresa consultada: ${report.data.companyName}.`;
+      } else {
+        desc = `Historial obtenido para ${report.data.plate}.`;
+      }
 
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('govcheck-notification', {

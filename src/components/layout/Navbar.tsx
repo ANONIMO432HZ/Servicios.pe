@@ -437,7 +437,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-linear-to-rrom-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-xl p-3 mb-4 text-center">
+                    <div className="bg-linear-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-xl p-3 mb-4 text-center">
                       <div className="flex items-center justify-center gap-1.5 mb-1 text-purple-400">
                         <Sparkles className="w-4 h-4 text-purple-400" />
                         <span className="text-xs font-black uppercase tracking-wider">Acceso Premium</span>
@@ -446,7 +446,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
-                          alert("Esta web es un demo, estamos trabajando en ello...");
+                          alert("Próximamente...");
                         }}
                         className="w-full bg-purple-500 hover:bg-purple-600 text-white text-xs font-bold py-2 rounded-lg transition-all active:scale-[0.98]"
                       >

@@ -19,5 +19,6 @@ coverage/
 !.env.example
 .vercel/
 
-#Data
+# Extras
 data/
+scratch/
