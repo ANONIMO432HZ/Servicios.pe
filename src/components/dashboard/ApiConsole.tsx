@@ -64,8 +64,7 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
   // Selección de consulta
   const [category, setCategory] = useState<'free' | 'paid'>('free');
   const [queryType, setQueryType] = useState<
-    'dni' | 'license' | 'ruc' | 'ruc-debt' | 'plate' | 'soat' | 
-    'ruc10-names' | 'ruc10-by-dni' | 'dni-verification-digit' | 'how-many-same-name'
+    'dni' | 'license' | 'ruc' | 'ruc-debt' | 'plate' | 'soat'
   >('dni');
   const [inputValue, setInputValue] = useState('');
   
@@ -137,7 +136,7 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
 
     if (category === 'paid' && !hasJsonPeToken) {
       setSearchState('error');
-      setErrorMessage('La consulta Premium está deshabilitada porque no se ha detectado el token de json.pe en el servidor.');
+      setErrorMessage('La consulta Premium está deshabilitada porque no se ha configurado el token de acceso en el servidor.');
       return;
     }
 
@@ -150,10 +149,10 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
 
     // Pre-validación cliente
     if (category === 'free') {
-      const freeTypes = ['dni', 'ruc', 'ruc10-names', 'ruc10-by-dni', 'dni-verification-digit', 'how-many-same-name'];
+      const freeTypes = ['dni', 'ruc', 'plate', 'soat'];
       if (!freeTypes.includes(queryType)) {
         setSearchState('error');
-        setErrorMessage('La categoría gratuita (eldni.com) no soporta esta consulta.');
+        setErrorMessage('La categoría gratuita no soporta esta consulta. Seleccioná Premium si tenés acceso habilitado.');
         return;
       }
       if (queryType === 'dni' && !/^\d{8}$/.test(cleanedVal)) {
@@ -166,35 +165,22 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
         setErrorMessage('Formato inválido: El RUC debe contener exactamente 11 dígitos.');
         return;
       }
-      if (queryType === 'ruc10-names' && !/^10\d{9}$/.test(cleanedVal)) {
-        setSearchState('error');
-        setErrorMessage('Formato inválido: El RUC 10 debe comenzar con 10 y tener exactamente 11 dígitos.');
-        return;
-      }
-      if (queryType === 'ruc10-by-dni' && !/^\d{8}$/.test(cleanedVal)) {
-        setSearchState('error');
-        setErrorMessage('Formato inválido: El DNI debe contener exactamente 8 dígitos.');
-        return;
-      }
-      if (queryType === 'dni-verification-digit' && !/^\d{8}$/.test(cleanedVal)) {
-        setSearchState('error');
-        setErrorMessage('Formato inválido: El DNI debe contener exactamente 8 dígitos.');
-        return;
-      }
-      if (queryType === 'how-many-same-name' && cleanedVal.length < 2) {
-        setSearchState('error');
-        setErrorMessage('Formato inválido: Ingrese un nombre de al menos 2 letras.');
-        return;
+      if (queryType === 'plate' || queryType === 'soat') {
+        if (cleanedVal.length < 5) {
+          setSearchState('error');
+          setErrorMessage('Formato inválido: Ingrese una placa vehicular válida.');
+          return;
+        }
       }
     } else {
       // Validaciones para Paid (json.pe)
-      if (queryType === 'dni' || queryType === 'license' || queryType === 'ruc10-by-dni' || queryType === 'dni-verification-digit') {
+      if (queryType === 'dni' || queryType === 'license') {
         if (!/^\d{8}$/.test(cleanedVal)) {
           setSearchState('error');
           setErrorMessage('Formato inválido: El DNI debe contener exactamente 8 dígitos.');
           return;
         }
-      } else if (queryType === 'ruc' || queryType === 'ruc-debt' || queryType === 'ruc10-names') {
+      } else if (queryType === 'ruc' || queryType === 'ruc-debt') {
         if (!/^\d{11}$/.test(cleanedVal)) {
           setSearchState('error');
           setErrorMessage('Formato inválido: El RUC debe contener exactamente 11 dígitos.');
@@ -206,12 +192,6 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
           setErrorMessage('Formato inválido: Ingrese una placa vehicular válida.');
           return;
         }
-      } else if (queryType === 'how-many-same-name') {
-        if (cleanedVal.length < 2) {
-          setSearchState('error');
-          setErrorMessage('Formato inválido: Ingrese un nombre de al menos 2 letras.');
-          return;
-        }
       }
     }
 
@@ -220,14 +200,12 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
       let endpoint = queryType;
       let queryParam = '';
 
-      if (queryType === 'dni' || queryType === 'license' || queryType === 'ruc10-by-dni' || queryType === 'dni-verification-digit') {
+      if (queryType === 'dni' || queryType === 'license') {
         queryParam = `dni=${cleanedVal}`;
-      } else if (queryType === 'ruc' || queryType === 'ruc-debt' || queryType === 'ruc10-names') {
+      } else if (queryType === 'ruc' || queryType === 'ruc-debt') {
         queryParam = `ruc=${cleanedVal}`;
       } else if (queryType === 'plate' || queryType === 'soat') {
         queryParam = `plate=${cleanedVal}`;
-      } else if (queryType === 'how-many-same-name') {
-        queryParam = `name=${cleanedVal}`;
       }
 
       const res = await fetch(`/api/search/${endpoint}?${queryParam}&provider=${providerParam}`);
@@ -242,16 +220,12 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
         // Disparar evento de notificación dinámico
         if (typeof window !== 'undefined') {
           let queryName = queryType.toUpperCase();
-          if (queryType === 'dni-verification-digit') queryName = 'DÍGITO VERIFICADOR';
-          else if (queryType === 'ruc10-names') queryName = 'NOMBRES POR RUC 10';
-          else if (queryType === 'ruc10-by-dni') queryName = 'RUC 10 POR DNI';
-          else if (queryType === 'how-many-same-name') queryName = '¿CUÁNTOS SE LLAMAN COMO YO?';
-          else if (queryType === 'ruc-debt') queryName = 'DEUDA COACTIVA';
-          
+          if (queryType === 'ruc-debt') queryName = 'DEUDA COACTIVA';
+
           window.dispatchEvent(new CustomEvent('govcheck-notification', {
             detail: {
               title: `Consola API: ${queryName} Exitosa`,
-              desc: `Consulta sobre "${cleanedVal}" realizada con éxito usando el proveedor ${category === 'free' ? 'eldni.com' : 'json.pe'}.`,
+              desc: `Consulta sobre "${cleanedVal}" realizada con éxito desde la consola.`,
               type: 'success'
             }
           }));
@@ -358,9 +332,9 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
                   return;
                 }
                 setCategory('free');
-                const freeTypes = ['dni', 'ruc', 'ruc10-names', 'ruc10-by-dni', 'dni-verification-digit', 'how-many-same-name'];
+                const freeTypes = ['dni', 'ruc', 'plate', 'soat'];
                 if (!freeTypes.includes(queryType)) {
-                  setQueryType('dni'); // Forzar DNI si estaba en algún tipo no soportado por eldni
+                  setQueryType('dni');
                 }
               }}
               className={`py-3 px-4 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-1 ${
@@ -369,7 +343,7 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
                   : 'text-zinc-500 hover:text-zinc-300'
               }`}
             >
-              <span className="font-bold">Gratuito</span>
+                <span className="font-bold">Gratuito</span>
               <span className="text-[9px] uppercase tracking-widest text-primary font-semibold">SIN COSTO</span>
             </button>
             
@@ -407,16 +381,12 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
           <label className="block text-xs font-bold text-zinc-400 uppercase tracking-widest">Tipo de Consulta</label>
           <div className="flex flex-col gap-2">
             {[
-              { id: 'dni', name: 'DNI (Identidad)', cost: 1, freeAllowed: true },
-              { id: 'ruc', name: 'RUC (Empresas)', cost: 1, freeAllowed: true },
-              { id: 'ruc10-names', name: 'Nombres por RUC 10', cost: 1, freeAllowed: true },
-              { id: 'ruc10-by-dni', name: 'RUC 10 por DNI', cost: 1, freeAllowed: true },
-              { id: 'dni-verification-digit', name: 'Dígito Verificador DNI', cost: 1, freeAllowed: true },
-              { id: 'how-many-same-name', name: '¿Cuántos se llaman como yo?', cost: 1, freeAllowed: true },
-              { id: 'license', name: 'Licencia MTC', cost: 1, freeAllowed: false },
-              { id: 'ruc-debt', name: 'Deuda Coactiva', cost: 1, freeAllowed: false },
-              { id: 'plate', name: 'SUNARP (Placa)', cost: 2, freeAllowed: false },
-              { id: 'soat', name: 'SOAT Vehicular', cost: 1, freeAllowed: false },
+              { id: 'dni', name: 'DNI (Identidad)', group: 'Identidad', cost: 1, freeAllowed: true },
+              { id: 'ruc', name: 'RUC (Empresa)', group: 'RUC', cost: 1, freeAllowed: true },
+              { id: 'plate', name: 'Placa (Vehículo)', group: 'Vehículo', cost: 2, freeAllowed: true },
+              { id: 'soat', name: 'SOAT Vehicular', group: 'Vehículo', cost: 1, freeAllowed: true },
+              { id: 'license', name: 'Licencia de Conducir', group: 'Identidad', cost: 1, freeAllowed: false },
+              { id: 'ruc-debt', name: 'Deuda Coactiva', group: 'RUC', cost: 1, freeAllowed: false },
             ].map((item) => {
               const isSelected = queryType === item.id;
               const isAllowed = (category === 'paid' && hasJsonPeToken) || item.freeAllowed;
@@ -481,13 +451,11 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
                     type="text"
                     required
                     placeholder={
-                      queryType === 'dni' || queryType === 'ruc10-by-dni' || queryType === 'dni-verification-digit'
-                        ? "Ingresá DNI (ej. 43234567)" 
-                        : queryType === 'ruc' || queryType === 'ruc-debt' || queryType === 'ruc10-names'
+                      queryType === 'dni' || queryType === 'license'
+                        ? "Ingresá DNI (ej. 43234567)"
+                        : queryType === 'ruc' || queryType === 'ruc-debt'
                           ? "Ingresá RUC (ej. 20123456789)"
-                          : queryType === 'how-many-same-name'
-                            ? "Ingresá solo nombres de pila, sin apellidos (ej. CARLOS o JUAN CARLOS)"
-                            : "Ingresá Placa (ej. ABC-1234)"
+                          : "Ingresá Placa (ej. ABC-1234)"
                     }
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
@@ -509,12 +477,6 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
                   )}
                 </button>
               </div>
-              {queryType === 'how-many-same-name' && (
-                <div className="flex items-start gap-2 mt-2 px-1 text-[11px] text-amber-500/80 font-medium">
-                  <ShieldAlert className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                  <p>Recuerda: Ingresa únicamente nombres de pila. No debes incluir apellidos para esta consulta para evitar errores.</p>
-                </div>
-              )}
             </div>
           </form>
         </div>
@@ -589,7 +551,7 @@ export function ApiConsole({ hasJsonPeToken = false }: ApiConsoleProps) {
                 >
                   <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto" />
                   <div>
-                    <h4 className="text-zinc-200 font-bold">Conectando con {category === 'free' ? 'eldni.com' : 'json.pe'}...</h4>
+                    <h4 className="text-zinc-200 font-bold">Conectando con servidores oficiales...</h4>
                     <p className="text-xs text-zinc-500 mt-1 font-medium animate-pulse">Consultando base de datos oficial...</p>
                   </div>
                 </motion.div>

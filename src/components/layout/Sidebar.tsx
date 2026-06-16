@@ -23,7 +23,7 @@ export function Sidebar({ initialOpen = false }: SidebarProps) {
 
   const navItems = [
     { name: 'Portal Principal', href: '/', icon: LayoutDashboard },
-    { name: 'Consola API', href: '/console', icon: Key, badge: 'Beta' },
+    // { name: 'Consola API', href: '/console', icon: Key, badge: 'Beta' },
     // { name: 'Consultas CSV', href: '/bulk-dni', icon: Database, badge: 'Nuevo' },
     { name: 'Historial', href: '/history', icon: History },
   ];

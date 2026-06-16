@@ -5,6 +5,8 @@ import type { VehicleReport } from '../lib/mock-data';
 export type SearchState = 'idle' | 'loading' | 'success' | 'error';
 export type AdaptiveSearchType = 'VEHICULAR' | 'IDENTIDAD' | 'EMPRESA';
 
+export type SearchTabType = 'identidad' | 'ruc' | 'vehiculo';
+
 export interface IdentityReport {
   dni: string;
   fullName: string;
@@ -40,10 +42,9 @@ export type AdaptiveReport =
   | { searchType: 'IDENTIDAD'; data: IdentityReport }
   | { searchType: 'EMPRESA'; data: CompanyReport };
 
-// Convierte datos antiguos de localStorage (si los hay) al nuevo formato AdaptiveReport
 export const ensureAdaptiveReport = (item: any): AdaptiveReport => {
   if (item && item.searchType) return item;
-  
+
   const rawData = item?.data || item;
   if (!rawData) {
     return {
@@ -65,7 +66,6 @@ export const ensureAdaptiveReport = (item: any): AdaptiveReport => {
     };
   }
 
-  // Detectar por campos específicos si es DNI o RUC
   const isPersona = rawData.vin === 'PERSONA NATURAL' || item?.type === 'IDENTIDAD';
   const isEmpresa = rawData.vin === 'PERSONA JURÍDICA' || item?.type === 'EMPRESA' || rawData.make === 'EMPRESA REGISTRADA';
 
@@ -118,14 +118,13 @@ const saveToHistory = (query: string, report: AdaptiveReport) => {
   try {
     const existing = localStorage.getItem('govcheck_search_history');
     let historyList = existing ? JSON.parse(existing) : [];
-    
-    // Evitar duplicados (eliminar anterior si existe el mismo query)
+
     historyList = historyList.filter((item: any) => item.query.trim().toUpperCase() !== query.trim().toUpperCase());
-    
-    const subtitleText = report.searchType === 'VEHICULAR' 
-      ? `${report.data.make} ${report.data.model}` 
-      : report.searchType === 'IDENTIDAD' 
-        ? report.data.fullName 
+
+    const subtitleText = report.searchType === 'VEHICULAR'
+      ? `${report.data.make} ${report.data.model}`
+      : report.searchType === 'IDENTIDAD'
+        ? report.data.fullName
         : report.data.companyName;
 
     const newItem = {
@@ -135,10 +134,9 @@ const saveToHistory = (query: string, report: AdaptiveReport) => {
       title: report.searchType === 'VEHICULAR' ? `Placa ${query}` : report.searchType === 'IDENTIDAD' ? `DNI ${query}` : `RUC ${query}`,
       subtitle: subtitleText,
       timestamp: new Date().toLocaleString('es-PE'),
-      data: report // Guardamos en el nuevo formato AdaptiveReport
+      data: report
     };
-    
-    // Agregar al principio y limitar a 25 elementos
+
     historyList = [newItem, ...historyList].slice(0, 25);
     localStorage.setItem('govcheck_search_history', JSON.stringify(historyList));
   } catch (e) {
@@ -146,299 +144,219 @@ const saveToHistory = (query: string, report: AdaptiveReport) => {
   }
 };
 
+function parseNameInput(input: string): { nombres: string; apellido_paterno: string; apellido_materno: string } | null {
+  const parts = input.split(',').map(s => s.trim());
+  if (parts.length === 2 && parts[0].split(/\s+/).length >= 2) {
+    const surnames = parts[0].split(/\s+/);
+    return {
+      apellido_paterno: surnames[0],
+      apellido_materno: surnames.slice(1).join(' '),
+      nombres: parts[1],
+    };
+  }
+  const words = input.split(/\s+/);
+  if (words.length < 3) return null;
+  return {
+    nombres: words.slice(0, -2).join(' '),
+    apellido_paterno: words[words.length - 2],
+    apellido_materno: words[words.length - 1],
+  };
+}
+
+async function searchByIdentity(cleanId: string): Promise<AdaptiveReport> {
+  const isDni = /^\d{8}$/.test(cleanId);
+  let dni: string;
+  let fullName: string;
+
+  if (isDni) {
+    dni = cleanId;
+    const dniRes = await fetch(`/api/search/dni?dni=${dni}`);
+    const dniResult = await dniRes.json();
+    if (!dniResult.success || !dniResult.data) {
+      throw new Error(dniResult.message || 'DNI no encontrado');
+    }
+    fullName = dniResult.data.nombre_completo || `${dniResult.data.apellido_paterno} ${dniResult.data.apellido_materno}, ${dniResult.data.nombres}`;
+  } else {
+    const parsed = parseNameInput(cleanId);
+    if (!parsed) throw new Error('Formato de nombre invalido. Usa: Nombres ApellidoPaterno ApellidoMaterno o Apellidos, Nombres');
+    const nameRes = await fetch(`/api/search/dniperu/by-name?nombres=${encodeURIComponent(parsed.nombres)}&apellido_paterno=${encodeURIComponent(parsed.apellido_paterno)}&apellido_materno=${encodeURIComponent(parsed.apellido_materno)}`);
+    const nameResult = await nameRes.json();
+    if (!nameResult.success || !nameResult.data?.resultados?.length) {
+      throw new Error(nameResult.message || 'No se encontraron resultados para ese nombre');
+    }
+    const first = nameResult.data.resultados[0];
+    dni = first.numero;
+    fullName = `${first.apellido_paterno} ${first.apellido_materno}, ${first.nombres}`;
+
+    const dniRes = await fetch(`/api/search/dni?dni=${dni}`);
+    const dniResult = await dniRes.json();
+    if (dniResult.success && dniResult.data) {
+      fullName = dniResult.data.nombre_completo || fullName;
+    }
+  }
+
+  let licenseData: { success: boolean; data: any; message?: string } = { success: false, data: null };
+  try {
+    const licenseRes = await fetch(`/api/search/license?dni=${dni}`, { signal: AbortSignal.timeout(4000) });
+    if (licenseRes.ok) licenseData = await licenseRes.json();
+    else licenseData = await licenseRes.json().catch(() => ({ success: false, data: null, message: 'Error del servidor' }));
+  } catch {
+  }
+
+  const hasLicenseSupport = licenseData.success;
+  const isUnavailable = !licenseData.success && (
+    licenseData.message?.toLowerCase().includes('no soportada') ||
+    licenseData.message?.toLowerCase().includes('configuracion') ||
+    licenseData.message?.toLowerCase().includes('token') ||
+    licenseData.message?.toLowerCase().includes('premium')
+  );
+
+  return {
+    searchType: 'IDENTIDAD',
+    data: {
+      dni,
+      fullName,
+      address: 'Dirección protegida',
+      ubigeo: 'N/A',
+      status: 'Clear',
+      license: hasLicenseSupport
+        ? { categoria: licenseData.data.licencia.categoria, estado: licenseData.data.licencia.estado }
+        : isUnavailable ? undefined : null,
+    }
+  };
+}
+
+async function searchByRuc(cleanId: string): Promise<AdaptiveReport> {
+  const rucRes = await fetch(`/api/search/ruc?ruc=${cleanId}`);
+  const rucResult = await rucRes.json();
+  if (!rucResult.success || !rucResult.data) {
+    throw new Error(rucResult.message || 'RUC no encontrado');
+  }
+
+  let debtData: { success: boolean; data: any[] } = { success: false, data: [] };
+  try {
+    const debtRes = await fetch(`/api/search/ruc-debt?ruc=${cleanId}`, { signal: AbortSignal.timeout(4000) });
+    if (debtRes.ok) debtData = await debtRes.json();
+  } catch {}
+
+  const debts: SUNATDebt[] = debtData.success && Array.isArray(debtData.data)
+    ? debtData.data.map((d: any, i: number) => ({
+        id: `DEBT-${i}`,
+        document: d.documento || 'N/A',
+        amount: parseFloat(d.monto) || 0,
+        startDate: d.fecha_inicio || 'N/A'
+      }))
+    : [];
+
+  return {
+    searchType: 'EMPRESA',
+    data: {
+      ruc: rucResult.data.ruc || cleanId,
+      companyName: rucResult.data.nombre_o_razon_social,
+      address: rucResult.data.direccion_completa || 'Dirección SUNAT',
+      status: rucResult.data.estado || 'ACTIVO',
+      condition: rucResult.data.condicion || 'HABIDO',
+      economicActivity: rucResult.data.actividad_economica?.[0] || 'Actividad Comercial',
+      systemStatus: rucResult.data.estado === 'ACTIVO' ? 'Clear' : 'Flagged',
+      debts
+    }
+  };
+}
+
+async function searchByPlate(cleanId: string): Promise<AdaptiveReport> {
+  const [plateRes, soatRes] = await Promise.all([
+    fetch(`/api/search/plate?plate=${cleanId}`),
+    fetch(`/api/search/soat?plate=${cleanId}`)
+  ]);
+
+  const plateResult = await plateRes.json();
+  const soatResult = await soatRes.json();
+
+  if (!plateResult.success || !plateResult.data) {
+    const report = mockReports.find(r => r.plate === cleanId);
+    if (report) {
+      return { searchType: 'VEHICULAR', data: report };
+    }
+    throw new Error(plateResult.message || 'No se encontro informacion para esta placa');
+  }
+
+  const vehicularReport: VehicleReport = {
+    plate: plateResult.data.placa,
+    vin: plateResult.data.vin || plateResult.data.serie || 'N/A',
+    make: plateResult.data.marca,
+    model: plateResult.data.modelo,
+    year: 2020,
+    color: plateResult.data.color,
+    engineNumber: plateResult.data.motor,
+    owner: {
+      name: 'PROPIETARIO REGISTRADO',
+      dni: '********',
+      address: 'Dirección en registros SUNARP'
+    },
+    status: 'Clear',
+    fines: [],
+    revisions: [],
+    theftReport: { reported: false },
+    soat: soatResult.success ? {
+      active: soatResult.data.estado === 'VIGENTE',
+      expiry: soatResult.data.fecha_fin,
+      company: soatResult.data.nombre_compania
+    } : { active: false, expiry: 'No Registra / Vencido', company: 'S/D' }
+  };
+
+  return { searchType: 'VEHICULAR', data: vehicularReport };
+}
+
 export function useVehicleSearch() {
   const [state, setState] = useState<SearchState>('idle');
   const [data, setData] = useState<AdaptiveReport | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const search = async (identifier: string) => {
+  const search = async (identifier: string, searchType: SearchTabType) => {
     const cleanId = identifier.trim().toUpperCase();
     if (!cleanId) return;
-    
+
     setState('loading');
     setData(null);
     setErrorMsg('');
 
-    // Detección de Tipo de Búsqueda
-    const isDni = /^\d{8}$/.test(cleanId);
-    const isRuc = /^\d{11}$/.test(cleanId);
-
-    // 1. Búsqueda por DNI (Identidad + Licencia)
-    if (isDni) {
-      try {
-        const dniRes = await fetch(`/api/search/dni?dni=${cleanId}`);
-        const dniResult = await dniRes.json();
-
-        if (dniResult.success && dniResult.data) {
-          let licenseData: { success: boolean; data: any; message?: string } = { success: false, data: null };
-          try {
-            const licenseRes = await fetch(`/api/search/license?dni=${cleanId}`, { signal: AbortSignal.timeout(4000) });
-            if (licenseRes.ok) licenseData = await licenseRes.json();
-            else licenseData = await licenseRes.json().catch(() => ({ success: false, data: null, message: 'Error del servidor' }));
-          } catch {
-          }
-
-          const hasLicenseSupport = licenseData.success;
-          const isUnavailable = !licenseData.success && (
-            licenseData.message?.toLowerCase().includes('no soportada') ||
-            licenseData.message?.toLowerCase().includes('configuración') ||
-            licenseData.message?.toLowerCase().includes('token') ||
-            licenseData.message?.toLowerCase().includes('premium')
-          );
-
-          const fullName = dniResult.data.nombre_completo || `${dniResult.data.apellido_paterno} ${dniResult.data.apellido_materno}, ${dniResult.data.nombres}`;
-          const adaptiveData: AdaptiveReport = {
-            searchType: 'IDENTIDAD',
-            data: {
-              dni: dniResult.data.numero || cleanId,
-              fullName,
-              address: dniResult.data.direccion || 'Dirección protegida',
-              ubigeo: dniResult.data.ubigeo_reniec || 'N/A',
-              status: 'Clear',
-              license: hasLicenseSupport
-                ? {
-                    categoria: licenseData.data.licencia.categoria,
-                    estado: licenseData.data.licencia.estado,
-                  }
-                : isUnavailable ? undefined : null,
-            }
-          };
-
-          setData(adaptiveData);
-          saveToHistory(cleanId, adaptiveData);
-          setState('success');
-
-          // Disparar evento de éxito
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('govcheck-notification', {
-              detail: {
-                title: 'Búsqueda Exitosa (DNI)',
-                desc: `Identidad verificada para ${fullName}.`,
-                type: 'success'
-              }
-            }));
-          }
-        } else {
-          setState('error');
-          const errorText = dniResult.message || 'DNI no encontrado.';
-          setErrorMsg(errorText);
-
-          // Disparar evento de error
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('govcheck-notification', {
-              detail: {
-                title: 'Error de Búsqueda (DNI)',
-                desc: `DNI ${cleanId}: ${errorText}`,
-                type: 'error'
-              }
-            }));
-          }
-        }
-      } catch {
-        setState('error');
-        setErrorMsg('Error al conectar con el servicio de identidad.');
-
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('govcheck-notification', {
-            detail: {
-              title: 'Fallo de Red (DNI)',
-              desc: `Error al conectar con RENIEC para el DNI ${cleanId}.`,
-              type: 'error'
-            }
-          }));
-        }
-      }
-      return;
-    }
-
-    // 2. Búsqueda por RUC (Empresa + Deuda Coactiva)
-    if (isRuc) {
-      try {
-        const rucRes = await fetch(`/api/search/ruc?ruc=${cleanId}`);
-        const rucResult = await rucRes.json();
-
-        if (rucResult.success && rucResult.data) {
-          let debtData: { success: boolean; data: any[] } = { success: false, data: [] };
-          try {
-             const debtRes = await fetch(`/api/search/ruc-debt?ruc=${cleanId}`, { signal: AbortSignal.timeout(4000) });
-             if (debtRes.ok) debtData = await debtRes.json();
-           } catch {}
-
-          const debts: SUNATDebt[] = debtData.success && Array.isArray(debtData.data) 
-            ? debtData.data.map((d: any, i: number) => ({
-                id: `DEBT-${i}`,
-                document: d.documento || 'N/A',
-                amount: parseFloat(d.monto) || 0,
-                startDate: d.fecha_inicio || 'N/A'
-              }))
-            : [];
-
-          const companyName = rucResult.data.nombre_o_razon_social;
-          const adaptiveData: AdaptiveReport = {
-            searchType: 'EMPRESA',
-            data: {
-              ruc: rucResult.data.ruc || cleanId,
-              companyName,
-              address: rucResult.data.direccion_completa || 'Dirección SUNAT',
-              status: rucResult.data.estado || 'ACTIVO',
-              condition: rucResult.data.condicion || 'HABIDO',
-              economicActivity: rucResult.data.actividad_economica?.[0] || 'Actividad Comercial',
-              systemStatus: rucResult.data.estado === 'ACTIVO' ? 'Clear' : 'Flagged',
-              debts
-            }
-          };
-
-          setData(adaptiveData);
-          saveToHistory(cleanId, adaptiveData);
-          setState('success');
-
-          // Disparar evento de éxito
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('govcheck-notification', {
-              detail: {
-                title: 'Búsqueda Exitosa (RUC)',
-                desc: `Empresa consultada: ${companyName}.`,
-                type: 'success'
-              }
-            }));
-          }
-        } else {
-          setState('error');
-          const errorText = rucResult.message || 'RUC no encontrado.';
-          setErrorMsg(errorText);
-
-          // Disparar evento de error
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('govcheck-notification', {
-              detail: {
-                title: 'Error de Búsqueda (RUC)',
-                desc: `RUC ${cleanId}: ${errorText}`,
-                type: 'error'
-              }
-            }));
-          }
-        }
-      } catch {
-        setState('error');
-        setErrorMsg('Error al conectar con el servicio de empresas.');
-
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('govcheck-notification', {
-            detail: {
-              title: 'Fallo de Red (RUC)',
-              desc: `Error de conexión con SUNAT para el RUC ${cleanId}.`,
-              type: 'error'
-            }
-          }));
-        }
-      }
-      return;
-    }
-
-    // 3. Búsqueda por Placa (Vehicular)
     try {
-      const [plateRes, soatRes] = await Promise.all([
-        fetch(`/api/search/plate?plate=${cleanId}`),
-        fetch(`/api/search/soat?plate=${cleanId}`)
-      ]);
+      let report: AdaptiveReport;
 
-      const plateResult = await plateRes.json();
-      const soatResult = await soatRes.json();
-
-      if (plateResult.success && plateResult.data) {
-        const vehicularReport: VehicleReport = {
-          plate: plateResult.data.placa,
-          vin: plateResult.data.vin || plateResult.data.serie || 'N/A',
-          make: plateResult.data.marca,
-          model: plateResult.data.modelo,
-          year: 2020, 
-          color: plateResult.data.color,
-          engineNumber: plateResult.data.motor,
-          owner: {
-            name: 'PROPIETARIO REGISTRADO',
-            dni: '********',
-            address: 'Dirección en registros SUNARP'
-          },
-          status: 'Clear',
-          fines: [], 
-          revisions: [],
-          theftReport: { reported: false },
-          soat: soatResult.success ? {
-            active: soatResult.data.estado === 'VIGENTE',
-            expiry: soatResult.data.fecha_fin,
-            company: soatResult.data.nombre_compania
-          } : { active: false, expiry: 'No Registra / Vencido', company: 'S/D' }
-        };
-
-        const adaptiveData: AdaptiveReport = {
-          searchType: 'VEHICULAR',
-          data: vehicularReport
-        };
-
-        setData(adaptiveData);
-        saveToHistory(cleanId, adaptiveData);
-        setState('success');
-
-        // Disparar evento de éxito
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('govcheck-notification', {
-            detail: {
-              title: 'Búsqueda Exitosa (Placa)',
-              desc: `Historial de SUNARP y SOAT obtenido para ${cleanId}.`,
-              type: 'success'
-            }
-          }));
+      if (searchType === 'identidad') {
+        report = await searchByIdentity(cleanId);
+      } else if (searchType === 'ruc') {
+        if (!/^\d{11}$/.test(cleanId)) {
+          throw new Error('RUC invalido: debe tener 11 digitos numericos');
         }
+        report = await searchByRuc(cleanId);
       } else {
-        // Fallback al mock si la API falla o no encuentra la placa
-        const report = mockReports.find(r => r.plate === cleanId);
-        if (report) {
-          const adaptiveData: AdaptiveReport = {
-            searchType: 'VEHICULAR',
-            data: report
-          };
-          setData(adaptiveData);
-          saveToHistory(cleanId, adaptiveData);
-          setState('success');
-
-          // Disparar éxito con Mock
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('govcheck-notification', {
-              detail: {
-                title: 'Búsqueda Exitosa (Placa Local)',
-                desc: `Se obtuvieron datos locales de respaldo para la placa ${cleanId}.`,
-                type: 'success'
-              }
-            }));
-          }
-        } else {
-          setState('error');
-          const errorText = plateResult.message || 'No se encontró información para esta placa.';
-          setErrorMsg(errorText);
-
-          // Disparar evento de error
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('govcheck-notification', {
-              detail: {
-                title: 'Error de Búsqueda (Placa)',
-                desc: `Placa ${cleanId}: ${errorText}`,
-                type: 'error'
-              }
-            }));
-          }
-        }
+        report = await searchByPlate(cleanId);
       }
-    } catch {
-      setState('error');
-      setErrorMsg('Error de conexión con el servicio vehicular.');
+
+      setData(report);
+      saveToHistory(cleanId, report);
+      setState('success');
+
+      const label = searchType === 'identidad' ? 'Identidad' : searchType === 'ruc' ? 'RUC' : 'Vehicular';
+      const desc = searchType === 'identidad'
+        ? `Identidad verificada para ${report.data.fullName}.`
+        : searchType === 'ruc'
+          ? `Empresa consultada: ${report.data.companyName}.`
+          : `Historial obtenido para ${report.data.plate}.`;
 
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('govcheck-notification', {
-          detail: {
-            title: 'Fallo de Red (Vehicular)',
-            desc: `Error de conexión de red al consultar la placa ${cleanId}.`,
-            type: 'error'
-          }
+          detail: { title: `Busqueda Exitosa (${label})`, desc, type: 'success' }
+        }));
+      }
+    } catch (e: any) {
+      setState('error');
+      setErrorMsg(e.message || 'Error al realizar la consulta');
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('govcheck-notification', {
+          detail: { title: 'Error de Busqueda', desc: e.message || 'Error desconocido', type: 'error' }
         }));
       }
     }
@@ -446,4 +364,3 @@ export function useVehicleSearch() {
 
   return { state, data, search, errorMsg };
 }
-

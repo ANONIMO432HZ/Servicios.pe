@@ -236,7 +236,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
         <nav className="flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar max-w-[40vw] sm:max-w-none">
           {[
             { name: 'Portal', href: '/' },
-            { name: 'Consola', href: '/console', badge: 'Beta' },
+            // { name: 'Consola', href: '/console', badge: 'Beta' },
             // { name: 'Consultas CSV', href: '/bulk-dni', badge: 'Nuevo' },
             { name: 'Historial', href: '/history' },
           ].map((item) => {
@@ -461,7 +461,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
                   <div className="space-y-1">
                     {!isGuest ? (
                       <>
-                        <a href="/console" className="flex items-center justify-between px-3 py-2.5 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
+                        {/* <a href="/console" className="flex items-center justify-between px-3 py-2.5 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
                           <div className="flex items-center gap-3">
                             <Key className="w-4 h-4 text-zinc-500" />
                             <span>Consola API</span>
@@ -469,7 +469,7 @@ export function Navbar({ role = 'admin' }: { role?: 'admin' | 'guest' }) {
                           <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 tracking-wider uppercase">
                             Beta
                           </span>
-                        </a>
+                        </a> */}
                         <a href="/history" className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
                           <History className="w-4 h-4 text-zinc-500" />
                           <span>Historial</span>

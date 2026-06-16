@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useVehicleSearch } from '../../hooks/useVehicleSearch';
-import type { VehicleReport, IdentityReport, CompanyReport, AdaptiveReport } from '../../hooks/useVehicleSearch';
+import type { VehicleReport, IdentityReport, CompanyReport, AdaptiveReport, SearchTabType } from '../../hooks/useVehicleSearch';
 
 // ==========================================
 // COPY BUTTON UTILITY COMPONENT
@@ -351,7 +351,7 @@ export function IdentityReportView({ data }: { data: IdentityReport }) {
                 <p className="text-xs font-bold text-amber-400">Licencia No Disponible</p>
                 <p className="text-[10px] text-zinc-500 leading-normal">
                   La consulta de licencias requiere un proveedor premium.{' '}
-                  <span className="text-zinc-400">Configurá <code className="text-amber-400 bg-black/30 px-1.5 py-0.5 rounded text-[9px]">JSON_PE_TOKEN</code> en el servidor para habilitar este servicio.</span>
+                  <span className="text-zinc-400">Consultá con tu administrador para habilitar este servicio.</span>
                 </p>
               </div>
             </div>
@@ -497,6 +497,7 @@ export function CompanyReportView({ data }: { data: CompanyReport }) {
 // ==========================================
 export function AdvancedSearch() {
   const [identifier, setIdentifier] = useState('');
+  const [searchType, setSearchType] = useState<SearchTabType>('identidad');
   const { state, data, search, errorMsg } = useVehicleSearch();
 
   // Loading States
@@ -504,27 +505,25 @@ export function AdvancedSearch() {
   const [loadingText, setLoadingText] = useState('Estableciendo conexión...');
   const [subText, setSubText] = useState('Buscando registros oficiales...');
 
-  // Real-time Classifier
-  const isDni = /^\d{8}$/.test(identifier.trim());
-  const isRuc = /^\d{11}$/.test(identifier.trim());
-  
-  // Dynamic Placeholder & Icons
-  let placeholderText = "Placa, DNI o RUC...";
-  let inputHelper = "Esperando búsqueda...";
-  let searchIcon = <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 transition-colors" />;
+  // Tab config
+  const tabs: { id: SearchTabType; label: string; icon: React.ReactNode }[] = [
+    { id: 'identidad', label: 'Identidad', icon: <User className="w-4 h-4" /> },
+    { id: 'ruc', label: 'RUC', icon: <Building2 className="w-4 h-4" /> },
+    { id: 'vehiculo', label: 'Vehículo', icon: <Car className="w-4 h-4" /> },
+  ];
 
-  if (identifier.trim().length === 0) {
-    placeholderText = "Placa, DNI o RUC...";
-    inputHelper = "Esperando búsqueda...";
-  } else if (isDni) {
-    placeholderText = "Ingresa el DNI (8 dígitos)";
-    inputHelper = "Identidad RENIEC + Licencia MTC";
-    searchIcon = <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500 transition-colors" />;
-  } else if (isRuc) {
-    placeholderText = "Ingresa el RUC (11 dígitos)";
+  // Dynamic Placeholder & Icons based on tab
+  let placeholderText = "Ingresa DNI (8 dígitos) o Nombre...";
+  let inputHelper = "Busca por DNI o nombres y apellidos";
+  let searchIcon = <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500 transition-colors" />;
+
+  if (searchType === 'ruc') {
+    if (/^\d{0,11}$/.test(identifier.trim())) {
+      placeholderText = "Ingresa el RUC (11 dígitos)";
+    }
     inputHelper = "Ficha SUNAT + Deudas Coactivas";
     searchIcon = <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-500 transition-colors" />;
-  } else {
+  } else if (searchType === 'vehiculo') {
     placeholderText = "Ingresa Placa o VIN...";
     inputHelper = "SUNARP + SOAT + Gravámenes";
     searchIcon = <Car className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary transition-colors" />;
@@ -540,7 +539,7 @@ export function AdvancedSearch() {
     let interval: NodeJS.Timeout;
     setProgress(0);
 
-    if (isDni) {
+    if (searchType === 'identidad') {
       setLoadingText("Conectando con RENIEC...");
       setSubText("Buscando ficha de identidad...");
       interval = setInterval(() => {
@@ -559,7 +558,7 @@ export function AdvancedSearch() {
           return prev;
         });
       }, 45);
-    } else if (isRuc) {
+    } else if (searchType === 'ruc') {
       setLoadingText("Conectando con SUNAT...");
       setSubText("Verificando estado de Ficha...");
       interval = setInterval(() => {
@@ -599,7 +598,7 @@ export function AdvancedSearch() {
     }
 
     return () => clearInterval(interval);
-  }, [state]);
+  }, [state, searchType]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -608,7 +607,7 @@ export function AdvancedSearch() {
       window.dispatchEvent(new CustomEvent('show-guest-modal'));
       return;
     }
-    search(identifier);
+    search(identifier, searchType);
   };
 
   return (
@@ -631,15 +630,26 @@ export function AdvancedSearch() {
               </span>
             </div>
             
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-500/5 border border-blue-500/10 text-[9px] text-blue-400 font-black font-mono tracking-tight uppercase transition-colors">
-                <Car className="w-3.5 h-3.5" />
-                Placas
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-green-500/5 border border-green-500/10 text-[9px] text-green-400 font-black font-mono tracking-tight uppercase transition-colors">
-                <User className="w-3.5 h-3.5" />
-                DNI
-              </span>
+            <div className="flex flex-wrap gap-1.5 p-1 bg-black/30 rounded-2xl border border-white/5 w-fit"
+              role="tablist"
+              aria-label="Tipo de consulta"
+            >
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={searchType === tab.id}
+                  onClick={() => setSearchType(tab.id)}
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
+                    searchType === tab.id
+                      ? 'bg-primary/15 text-white border border-primary/30 shadow-lg shadow-primary/10'
+                      : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
           
@@ -672,7 +682,7 @@ export function AdvancedSearch() {
             </div>
             <div className="text-[10px] sm:text-[11px] text-zinc-500 font-bold px-1 flex items-center gap-2 uppercase tracking-wider">
               <Activity className="w-3.5 h-3.5 text-primary animate-pulse" />
-              <span>Detectado: <strong className="text-zinc-300">{inputHelper}</strong></span>
+              <span>{inputHelper}</span>
             </div>
           </form>
         </div>

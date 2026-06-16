@@ -37,7 +37,7 @@ export const GET: APIRoute = async (context) => {
 
   try {
     const result = await ApiDniperu.consultarNombres(cleanDni);
-    const mapped = result.success
+    const mapped = result.success && result.data
       ? {
           success: true,
           data: {
