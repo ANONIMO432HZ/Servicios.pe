@@ -266,7 +266,7 @@ async function fetchElDni(type: SearchType, id: string): Promise<ApiResponse> {
       };
     }
   } catch {
-    return { success: false, data: null, message: 'Error al conectar con eldni.com', provider: 'eldni' };
+    return { success: false, data: null, message: 'Error al conectar el endpoint', provider: 'eldni' };
   }
   return { success: false, data: null, message: 'Operación no soportada', provider: 'eldni' };
 }
