@@ -262,7 +262,7 @@ export function Navbar({ onMenuClick, role = 'admin' }: NavbarProps) {
           {[
             { name: 'Portal', href: '/' },
             { name: 'Consola', href: '/console', badge: 'Beta' },
-            { name: 'Consultas CSV', href: '/bulk-dni', badge: 'Nuevo' },
+            // { name: 'Consultas CSV', href: '/bulk-dni', badge: 'Nuevo' },
             { name: 'Historial', href: '/history' },
           ].map((item) => {
             const isActive = pathname === item.href;
