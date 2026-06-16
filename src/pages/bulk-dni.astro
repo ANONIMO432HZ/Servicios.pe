@@ -1,0 +1,24 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { BulkDniConsole } from '../components/dashboard/BulkDniConsole';
+---
+
+<DashboardLayout title="Consultas DNI a CSV">
+	<div class="space-y-12 pb-20">
+		<header>
+			<h1 class="text-3xl font-black text-white tracking-tight sm:text-4xl flex items-center gap-3">
+				<span>Consultas de DNI <span class="text-primary">a CSV</span></span>
+				<span class="px-2.5 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-black border border-primary/20 animate-pulse tracking-widest uppercase">
+					Nuevo
+				</span>
+			</h1>
+			<p class="text-zinc-500 mt-2 font-medium max-w-2xl">
+				Cargue listas masivas de DNI, asocie un identificador de registro y exporte los datos obtenidos de eldni.com consolidados en un archivo CSV.
+			</p>
+		</header>
+
+		<section>
+			<BulkDniConsole client:load />
+		</section>
+	</div>
+</DashboardLayout>

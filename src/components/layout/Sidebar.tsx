@@ -1,5 +1,5 @@
 "use client"
-import { Search, History, LayoutDashboard, LogOut, ChevronRight, ShieldCheck, X, Key } from 'lucide-react';
+import { Search, History, LayoutDashboard, LogOut, ChevronRight, ShieldCheck, X, Key, Database } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 
@@ -24,6 +24,7 @@ export function Sidebar({ initialOpen = false }: SidebarProps) {
   const navItems = [
     { name: 'Portal Principal', href: '/', icon: LayoutDashboard },
     { name: 'Consola API', href: '/console', icon: Key, badge: 'Beta' },
+    { name: 'Consultas CSV', href: '/bulk-dni', icon: Database, badge: 'Nuevo' },
     { name: 'Historial', href: '/history', icon: History },
   ];
 

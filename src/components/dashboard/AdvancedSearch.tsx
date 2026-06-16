@@ -15,11 +15,12 @@ import {
   CreditCard,
   Briefcase,
   Activity,
-  Copy
+  Copy,
+  Download
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useVehicleSearch } from '../../hooks/useVehicleSearch';
-import type { VehicleReport, IdentityReport, CompanyReport } from '../../hooks/useVehicleSearch';
+import type { VehicleReport, IdentityReport, CompanyReport, AdaptiveReport } from '../../hooks/useVehicleSearch';
 
 // ==========================================
 // COPY BUTTON UTILITY COMPONENT
@@ -51,6 +52,101 @@ function CopyButton({ text }: { text: string }) {
       )}
     </button>
   );
+}
+
+// ==========================================
+// CSV DOWNLOAD UTILITY
+// ==========================================
+function downloadCSV(report: AdaptiveReport, query: string) {
+  const esc = (v: string | number | boolean | null | undefined) => {
+    const s = String(v ?? '');
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+
+  const label = report.searchType === 'VEHICULAR' ? 'INFORME VEHICULAR'
+    : report.searchType === 'IDENTIDAD' ? 'CONSULTA IDENTIDAD'
+    : 'PERFIL TRIBUTARIO';
+
+  let rows: string[][] = [];
+
+  if (report.searchType === 'VEHICULAR') {
+    const d = report.data;
+    rows.push(['Campo', 'Valor']);
+    rows.push(['Placa', esc(d.plate)]);
+    rows.push(['VIN', esc(d.vin)]);
+    rows.push(['Marca', esc(d.make)]);
+    rows.push(['Modelo', esc(d.model)]);
+    rows.push(['Año', esc(d.year)]);
+    rows.push(['Color', esc(d.color)]);
+    rows.push(['Motor', esc(d.engineNumber)]);
+    rows.push(['Propietario', esc(d.owner.name)]);
+    rows.push(['DNI Prop.', esc(d.owner.dni)]);
+    rows.push(['Dirección', esc(d.owner.address)]);
+    rows.push(['Estado', esc(d.status)]);
+    rows.push(['SOAT Activo', esc(d.soat.active ? 'Sí' : 'No')]);
+    rows.push(['SOAT Vencimiento', esc(d.soat.expiry)]);
+    rows.push(['SOAT Compañía', esc(d.soat.company)]);
+    if (d.theftReport) {
+      rows.push(['Robo Reportado', esc(d.theftReport.reported ? 'Sí' : 'No')]);
+      if (d.theftReport.date) rows.push(['Fecha Robo', esc(d.theftReport.date)]);
+      if (d.theftReport.details) rows.push(['Detalle Robo', esc(d.theftReport.details)]);
+    }
+
+    if (d.fines.length > 0) {
+      rows.push([]);
+      rows.push(['=== MULTAS ===']);
+      rows.push(['ID', 'Entidad', 'Fecha', 'Monto', 'Estado', 'Descripción']);
+      d.fines.forEach(f => rows.push([esc(f.id), esc(f.entity), esc(f.date), esc(f.amount), esc(f.status), esc(f.description)]));
+    }
+
+    if (d.revisions.length > 0) {
+      rows.push([]);
+      rows.push(['=== REVISIONES TÉCNICAS ===']);
+      rows.push(['ID', 'Fecha', 'Resultado', 'Entidad', 'Vencimiento']);
+      d.revisions.forEach(r => rows.push([esc(r.id), esc(r.date), esc(r.result), esc(r.entity), esc(r.expiry)]));
+    }
+  } else if (report.searchType === 'IDENTIDAD') {
+    const d = report.data;
+    rows.push(['Campo', 'Valor']);
+    rows.push(['DNI', esc(d.dni)]);
+    rows.push(['Nombre', esc(d.fullName)]);
+    rows.push(['Dirección', esc(d.address)]);
+    rows.push(['Ubigeo', esc(d.ubigeo)]);
+    rows.push(['Estado', esc(d.status)]);
+    if (d.license) {
+      rows.push([]);
+      rows.push(['=== LICENCIA DE CONDUCIR ===']);
+      rows.push(['Categoría', esc(d.license.categoria)]);
+      rows.push(['Estado', esc(d.license.estado)]);
+    }
+  } else if (report.searchType === 'EMPRESA') {
+    const d = report.data;
+    rows.push(['Campo', 'Valor']);
+    rows.push(['RUC', esc(d.ruc)]);
+    rows.push(['Razón Social', esc(d.companyName)]);
+    rows.push(['Dirección', esc(d.address)]);
+    rows.push(['Estado', esc(d.status)]);
+    rows.push(['Condición', esc(d.condition)]);
+    rows.push(['Actividad', esc(d.economicActivity)]);
+    rows.push(['Situación', esc(d.systemStatus)]);
+
+    if (d.debts.length > 0) {
+      rows.push([]);
+      rows.push(['=== DEUDAS COACTIVAS ===']);
+      rows.push(['ID', 'Documento', 'Monto', 'Fecha Inicio']);
+      d.debts.forEach(dt => rows.push([esc(dt.id), esc(dt.document), esc(dt.amount), esc(dt.startDate)]));
+    }
+  }
+
+  const bom = '\uFEFF';
+  const csv = bom + rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `govcheck-${query}-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ==========================================
@@ -636,9 +732,12 @@ export function AdvancedSearch() {
                   <CheckCircle2 className="w-5 h-5 text-green-500" />
                 </h3>
               </div>
-              <button className="text-xs font-black text-primary hover:text-white flex items-center justify-center gap-2 bg-primary/5 px-4 py-2.5 rounded-xl border border-primary/20 cursor-pointer transition-all uppercase tracking-widest active:scale-95">
-                Descargar PDF
-                <FileText className="w-4 h-4" />
+              <button
+                onClick={() => downloadCSV(data, identifier)}
+                className="text-xs font-black text-primary hover:text-white flex items-center justify-center gap-2 bg-primary/5 px-4 py-2.5 rounded-xl border border-primary/20 cursor-pointer transition-all uppercase tracking-widest active:scale-95"
+              >
+                Descargar CSV
+                <Download className="w-4 h-4" />
               </button>
             </div>
 
