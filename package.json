@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "npx vercel dev",
+    "preview:build": "astro build && npx serve dist/client",
     "lint": "eslint .",
     "clean": "rm -rf dist .astro"
   },
